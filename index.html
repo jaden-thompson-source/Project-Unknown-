@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project [UNNAMED] — Product Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #161616;
+    --border: #1e1e1e;
+    --border2: #282828;
+    --text: #d8d8d8;
+    --muted: #4a4a4a;
+    --muted2: #666666;
+    --accent: #f0f0f0;
+    --dim: #888888;
+    --mono: 'IBM Plex Mono', monospace;
+    --body: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-weight: 300;
+    font-size: 0.9rem;
+    line-height: 1.85;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 5rem 2.5rem 10rem;
+  }
+
+  /* ── Header ── */
+  .doc-header {
+    padding-bottom: 3.5rem;
+    margin-bottom: 3.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .doc-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+
+  .doc-title {
+    font-family: var(--mono);
+    font-size: 1.55rem;
+    font-weight: 400;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+
+  .doc-desc {
+    font-size: 0.9rem;
+    color: var(--dim);
+    max-width: 580px;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+
+  .meta-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid var(--border);
+  }
+
+  .meta-cell {
+    padding: 0.85rem 1rem;
+    border-right: 1px solid var(--border);
+  }
+
+  .meta-cell:last-child { border-right: none; }
+
+  .meta-label {
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .meta-value {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text);
+  }
+
+  /* ── Sections ── */
+  section {
+    margin-bottom: 3.5rem;
+  }
+
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-tag::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  h2 {
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  h3 {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--dim);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: 1.8rem;
+    margin-bottom: 0.75rem;
+  }
+
+  p {
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  p + p {
+    margin-top: -0.2rem;
+  }
+
+  /* ── Lists ── */
+  ul {
+    list-style: none;
+    margin-bottom: 1rem;
+  }
+
+  ul li {
+    padding: 0.25rem 0 0.25rem 1.2rem;
+    position: relative;
+    color: var(--text);
+  }
+
+  ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+  }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.2rem 0;
+    font-size: 0.82rem;
+  }
+
+  th {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-weight: 400;
+  }
+
+  td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  /* ── Callout ── */
+  .callout {
+    border-left: 2px solid var(--border2);
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    background: var(--surface);
+    font-size: 0.85rem;
+    color: var(--dim);
+    line-height: 1.75;
+  }
+
+  .callout strong {
+    color: var(--text);
+    font-weight: 400;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  /* ── Badge ── */
+  .badge {
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--border2);
+    color: var(--muted2);
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+  }
+
+  /* ── Version block ── */
+  .version-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .version-tag {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 0.2rem 0.5rem;
+  }
+
+  /* ── Divider ── */
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 3.5rem 0;
+  }
+
+  /* ── Footer ── */
+  footer {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<div class="doc-header">
+  <div class="doc-eyebrow">Product Documentation · Tech Entrepreneurship · 2026</div>
+  <div class="doc-title">Project [UNNAMED]<br>Fine Tip Active Stylus + Universal Overlay System</div>
+  <p class="doc-desc">A hardware project in two phases. V1 is a fine tip active stylus for capacitive tablets — the pencil-form drawing tool that the market never built. V2 is a transparent overlay that makes any tablet compatible with precision stylus input, regardless of the hardware inside.</p>
+  <div class="meta-row">
+    <div class="meta-cell">
+      <div class="meta-label">Status</div>
+      <div class="meta-value">Concept Stage</div>
+    </div>
+    <div class="meta-cell">
+      <div class="meta-label">V1 Target Price</div>
+      <div class="meta-value">Under $30</div>
+    </div>
+    <div class="meta-cell">
+      <div class="meta-label">Market</div>
+      <div class="meta-value">All Tablet Users</div>
+    </div>
+    <div class="meta-cell">
+      <div class="meta-label">Author</div>
+      <div class="meta-value">Jaden Thompson</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── 01 Overview ── -->
+<section>
+  <div class="section-tag">01 — Overview</div>
+
+  <h2>The Problem</h2>
+  <p>Capacitive touchscreens were built to detect fingers. A finger is wide — it disrupts enough sensing points that the screen registers it instantly. A pencil tip is too small. It falls between sensing grid lines and the screen either ignores it or misregisters it entirely.</p>
+  <p>So the market built styluses around the screen's limitation instead of solving it. Every affordable stylus has a wide rubber blob, a flat disc, or some other tip that exists purely because the screen can't detect anything smaller. Nobody built the actual pencil.</p>
+  <p>Premium styluses like the Apple Pencil solve this — they use an active signal and modified screen hardware to detect a fine tip. But they're locked to specific recent devices, cost $99–$129, and leave anyone with an older or non-Apple tablet with no real option. The budget tier is unusable. The premium tier is gated. Nothing exists in between.</p>
+
+  <div class="callout">
+    <strong>Origin</strong>
+    This started as a personal problem. Drawing on an older iPad Air 2, every stylus under $30 had a tip that made precision work impossible. After researching why — capacitive screen physics, how active styluses work, why fine tips fail — the gap was clear. A fine tip active stylus under $30 for any capacitive screen does not exist. This project builds it.
+  </div>
+
+  <h2>The Solution — Two Phases</h2>
+  <p>V1 solves the tip problem. An internal oscillator circuit boosts the signal at a fine metal tip so the screen registers it as a valid input — no wide rubber required. Pencil-form body, under $30, works on any standard capacitive tablet.</p>
+  <p>V2 removes the screen limitation entirely. A transparent overlay sits on top of any tablet screen and does its own stylus detection — pressure sensitivity, tilt, palm rejection — independent of whatever hardware is underneath. The tablet's native screen becomes irrelevant.</p>
+</section>
+
+
+<!-- ── 02 How It Works ── -->
+<section>
+  <div class="section-tag">02 — How It Works</div>
+
+  <h2>Technical Foundation</h2>
+
+  <h3>Capacitive Screens</h3>
+  <p>A capacitive touchscreen generates an electrostatic field across a grid of sensing electrodes in the display. When something disrupts that field — a finger, a conductive tip — the screen calculates the position of the disruption. The grid is spaced for finger-sized contact areas. A pencil point is geometrically too small to reach enough grid intersections to trigger a reliable detection.</p>
+
+  <h3>Passive vs Active Stylus</h3>
+  <p>A passive stylus just conducts electricity from your hand through a conductive tip. It works the same way a finger does. Wide tip required — no battery, no electronics, no fine point possible.</p>
+  <p>An active stylus has a battery and an internal circuit that generates its own signal. It doesn't rely on your body's electricity at all. The signal is strong enough that a fine metal tip can carry it to the screen surface without needing to cover a large area. The screen detects the signal, not the size of the contact.</p>
+
+  <h3>The Oscillator Circuit</h3>
+  <p>The core of V1 is a small oscillator circuit inside the stylus body. It generates a signal at the frequency the iPad screen uses for capacitive sensing — typically in the 200–300 kHz range. A brass or copper tip at the end carries that signal directly to the screen. The screen has no reason to reject it — it looks like a valid touch input.</p>
+
+  <table>
+    <tr>
+      <th>Type</th>
+      <th>Tip</th>
+      <th>Battery</th>
+      <th>Pressure</th>
+      <th>Compatibility</th>
+    </tr>
+    <tr>
+      <td>Passive (current budget market)</td>
+      <td>Wide rubber / disc</td>
+      <td>No</td>
+      <td>No</td>
+      <td>All capacitive screens</td>
+    </tr>
+    <tr>
+      <td>V1 — this product</td>
+      <td>Fine metal point</td>
+      <td>Small LiPo</td>
+      <td>No</td>
+      <td>All capacitive screens</td>
+    </tr>
+    <tr>
+      <td>Apple Pencil</td>
+      <td>Fine point</td>
+      <td>Yes</td>
+      <td>Yes</td>
+      <td>Recent iPads only</td>
+    </tr>
+    <tr>
+      <td>V2 — overlay system</td>
+      <td>Fine point</td>
+      <td>Yes</td>
+      <td>Yes</td>
+      <td>Any touchscreen device</td>
+    </tr>
+  </table>
+
+  <h3>Why No Pressure Sensitivity in V1</h3>
+  <p>Pressure sensitivity requires the screen's hardware to be specifically built to receive that kind of signal. On older devices the hardware isn't there and no circuit change in the stylus can add it. V1 focuses on the one thing every older device is missing — a usable fine tip. Pressure sensitivity ships with V2 via the overlay, which handles it independently.</p>
+</section>
+
+
+<!-- ── 03 Product ── -->
+<section>
+  <div class="section-tag">03 — Product</div>
+
+  <div class="version-header">
+    <h2>V1 — The Stylus</h2>
+    <span class="version-tag">Prototype Stage</span>
+  </div>
+
+  <h3>Physical Specifications</h3>
+  <table>
+    <tr><th>Attribute</th><th>Spec</th></tr>
+    <tr><td>Length</td><td>155mm — standard pencil length</td></tr>
+    <tr><td>Diameter</td><td>8.5mm body, tapers to 5.5mm at tip grip zone</td></tr>
+    <tr><td>Weight</td><td>Lightweight — hollow 3D printed PLA body at ~20% infill</td></tr>
+    <tr><td>Grip</td><td>Smooth. Sized for standard tripod grip</td></tr>
+    <tr><td>Tip material</td><td>Brass or copper — conductive, machinable to a fine point</td></tr>
+    <tr><td>Body material</td><td>PLA via FDM 3D printing</td></tr>
+    <tr><td>Power</td><td>Small rechargeable LiPo cell</td></tr>
+    <tr><td>Charging</td><td>USB-C port at cap end</td></tr>
+    <tr><td>Controls</td><td>Single recessed power button</td></tr>
+  </table>
+
+  <h3>Electronics</h3>
+  <ul>
+    <li>Oscillator circuit tuned to capacitive screen sensing frequency (200–300 kHz range)</li>
+    <li>Conductive metal tip carrying boosted signal to the screen surface</li>
+    <li>Small LiPo cell — estimated multi-hour use per charge</li>
+    <li>Charging and protection circuit integrated into body</li>
+  </ul>
+
+  <h3>Compatibility</h3>
+  <p>Any standard capacitive touchscreen. iPad (all generations), Android tablets, Windows touch devices, Chromebooks. No pairing, no app install, no device-specific configuration.</p>
+
+  <h3>What the 3D Model Covers</h3>
+  <p>The body STL is already completed. The design is hollow with a 4mm socket at the tip end for the conductive metal insert, toleranced for press-fit assembly. The body is intentionally printable on a standard FDM printer with no supports required.</p>
+
+  <hr>
+
+  <div class="version-header">
+    <h2>V2 — The Overlay</h2>
+    <span class="version-tag">Concept Stage</span>
+  </div>
+
+  <p>V2 is a different category of product entirely. Instead of a smarter stylus, it's a hardware layer — a thin transparent film that adheres to any tablet screen and handles all stylus detection itself. The tablet's native screen hardware becomes irrelevant because the overlay's own sensing grid is doing the work.</p>
+
+  <div class="callout">
+    <strong>The Core Idea</strong>
+    The overlay has an embedded sensing grid across its full surface area. The stylus communicates with the overlay, not the screen underneath. The overlay then translates that input into standard touch events the tablet already understands. No screen modification. No firmware changes. No device restrictions.
+  </div>
+
+  <h3>Physical Design</h3>
+  <ul>
+    <li>Thin transparent film — applies like a screen protector</li>
+    <li>Embedded conductive sensing grid (ITO or similar transparent conductor)</li>
+    <li>Optically clear — no visible impact on display quality</li>
+    <li>Small edge-mounted controller module handling signal processing</li>
+    <li>Passive on the screen side — active on the stylus detection side</li>
+  </ul>
+
+  <h3>Communication Back to Device</h3>
+  <table>
+    <tr><th>Method</th><th>Use Case</th><th>Tradeoff</th></tr>
+    <tr>
+      <td>Bluetooth HID</td>
+      <td>Wireless, no cables, any device</td>
+      <td>Minimal latency, requires one-time pairing</td>
+    </tr>
+    <tr>
+      <td>USB-C</td>
+      <td>Wired, zero latency, maximum reliability</td>
+      <td>Requires available port</td>
+    </tr>
+  </table>
+
+  <h3>What the Overlay Enables</h3>
+  <ul>
+    <li>Full pressure sensitivity — processed at the overlay level, not the screen</li>
+    <li>Tilt detection — handled by the controller module</li>
+    <li>Palm rejection — overlay distinguishes stylus signal from passive hand contact</li>
+    <li>Universal device support — any touchscreen, any age, any manufacturer</li>
+    <li>No app required — input arrives at the device as standard HID touch events</li>
+  </ul>
+</section>
+
+
+<!-- ── 04 Market ── -->
+<section>
+  <div class="section-tag">04 — Market</div>
+
+  <h2>Who This Is For</h2>
+  <p>Anyone who draws, annotates, or writes on a tablet and has been failed by the existing market. The frustration is universal — students, artists, professionals, casual users. The common thread is owning a tablet and finding that every affordable stylus is a poor tool and every good stylus is either too expensive or locked to a device they don't have.</p>
+
+  <h3>Target Segments</h3>
+  <table>
+    <tr><th>Segment</th><th>Problem</th></tr>
+    <tr>
+      <td>Students with older tablets</td>
+      <td>Need to annotate and sketch. Cannot justify $100+ accessory cost on a device they already own.</td>
+    </tr>
+    <tr>
+      <td>Casual artists</td>
+      <td>Draw on whatever tablet they have. Fine tip is non-negotiable for detail work. Budget options don't deliver it.</td>
+    </tr>
+    <tr>
+      <td>Note takers</td>
+      <td>Wide rubber tips make handwriting messy and imprecise. Want a tool that writes like a pen.</td>
+    </tr>
+    <tr>
+      <td>General tablet owners</td>
+      <td>Bought a cheap stylus, hated it, want something that actually works without upgrading their device.</td>
+    </tr>
+    <tr>
+      <td>V2 — creative professionals</td>
+      <td>Want full pressure sensitivity on non-Apple or older hardware. Currently have no good option.</td>
+    </tr>
+  </table>
+
+  <h3>Competitive Landscape</h3>
+  <table>
+    <tr><th>Product</th><th>Works On</th><th>Fine Tip</th><th>Pressure</th><th>Price</th></tr>
+    <tr>
+      <td>Budget rubber tip stylus</td>
+      <td>All capacitive</td>
+      <td>No</td>
+      <td>No</td>
+      <td>$5–$20</td>
+    </tr>
+    <tr>
+      <td>V1 — this product</td>
+      <td>All capacitive</td>
+      <td>Yes</td>
+      <td>No</td>
+      <td>Under $30</td>
+    </tr>
+    <tr>
+      <td>Apple Pencil</td>
+      <td>Recent iPads only</td>
+      <td>Yes</td>
+      <td>Yes</td>
+      <td>$99–$129</td>
+    </tr>
+    <tr>
+      <td>Samsung S Pen</td>
+      <td>Samsung devices only</td>
+      <td>Yes</td>
+      <td>Yes</td>
+      <td>Bundled or $50+</td>
+    </tr>
+    <tr>
+      <td>Wacom Intuos</td>
+      <td>Non-touch screens only</td>
+      <td>Yes</td>
+      <td>Yes</td>
+      <td>$80–$200</td>
+    </tr>
+    <tr>
+      <td>V2 — overlay + stylus</td>
+      <td>Any touchscreen device</td>
+      <td>Yes</td>
+      <td>Yes</td>
+      <td>TBD</td>
+    </tr>
+  </table>
+
+  <div class="callout">
+    <strong>The Gap</strong>
+    V1 occupies a space that doesn't exist in the current market — fine tip, active, under $30, works on everything. V2 goes further: the only product that adds full precision stylus capability to any existing touchscreen device regardless of what hardware is inside it. No current competitor touches either position.
+  </div>
+</section>
+
+
+<!-- ── 05 Business Model ── -->
+<section>
+  <div class="section-tag">05 — Business Model</div>
+
+  <h2>Structure</h2>
+
+  <h3>V1 — Cost to Manufacture</h3>
+  <table>
+    <tr><th>Component</th><th>Estimated Cost</th></tr>
+    <tr><td>3D printed PLA body</td><td>$1–$2 (material only)</td></tr>
+    <tr><td>Oscillator circuit components</td><td>$3–$5</td></tr>
+    <tr><td>Conductive metal tip (brass/copper rod)</td><td>$1–$2</td></tr>
+    <tr><td>Small LiPo cell</td><td>$2–$4</td></tr>
+    <tr><td>USB-C charging module</td><td>$1–$2</td></tr>
+    <tr><td>Assembly + misc</td><td>$2–$3</td></tr>
+    <tr><td><strong>Estimated total COGS</strong></td><td><strong>$10–$18 per unit</strong></td></tr>
+  </table>
+
+  <h3>Pricing</h3>
+  <p>V1 retail target: under $30. At a $10–$18 COGS that leaves viable margin for small-batch production while staying accessible to the target customer. V2 pricing is to be determined pending hardware cost research on transparent conductive film and controller components.</p>
+
+  <h3>Target Customer</h3>
+  <p>Primary: Students and casual artists with older tablets who want a real drawing tool under $30. Secondary (V2): Creative professionals and power users who want full precision stylus capability on any device they already own.</p>
+
+  <h3>Distribution</h3>
+  <ul>
+    <li>Initial — direct sales via online storefront (Shopify or similar). Low overhead, no middleman margin compression at early stage.</li>
+    <li>Growth — Amazon marketplace. Stylus is the kind of impulse-buy accessory that performs well in search-driven purchase behavior.</li>
+    <li>V2 expansion — wholesale to tablet accessory retailers, potentially education procurement channels where older devices are common.</li>
+    <li>Long term — licensing the overlay technology to tablet manufacturers directly as an OEM precision input layer.</li>
+  </ul>
+</section>
+
+
+<!-- ── 06 Roadmap ── -->
+<section>
+  <div class="section-tag">06 — Roadmap</div>
+
+  <h2>Build Phases</h2>
+
+  <table>
+    <tr><th>Phase</th><th>Milestone</th><th>Status</th></tr>
+    <tr>
+      <td>Research</td>
+      <td>Understand capacitive screen tech, active stylus circuit design, frequency requirements</td>
+      <td>In Progress</td>
+    </tr>
+    <tr>
+      <td>Body Design</td>
+      <td>3D printed body — pencil dimensions, hollow, tip socket, printable without supports</td>
+      <td>STL Complete</td>
+    </tr>
+    <tr>
+      <td>Circuit Prototype</td>
+      <td>Build oscillator circuit on breadboard, test signal against iPad Air 2 screen</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Tip Testing</td>
+      <td>Verify fine brass/copper tip registers reliably with active circuit powered on</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>Integration</td>
+      <td>Miniaturize circuit, fit into printed body with battery, test full assembly</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>V1 Working Prototype</td>
+      <td>Functional fine tip active stylus operating on older capacitive screen</td>
+      <td>Planned</td>
+    </tr>
+    <tr>
+      <td>V2 Research</td>
+      <td>Transparent conductive film, sensing grid design, HID input translation</td>
+      <td>Future</td>
+    </tr>
+    <tr>
+      <td>V2 Prototype</td>
+      <td>Working overlay with full pressure + tilt detection on a test device</td>
+      <td>Future</td>
+    </tr>
+  </table>
+
+  <h3>Key Technical Milestones</h3>
+  <ul>
+    <li>Identify exact sensing frequency of iPad Air 2 display</li>
+    <li>Build and validate oscillator circuit on breadboard</li>
+    <li>Confirm fine metal tip registers reliably with active signal</li>
+    <li>Miniaturize circuit to fit inside printed body</li>
+    <li>Source LiPo cell and USB-C charging module at target cost</li>
+    <li>V2: Research ITO film sourcing and transparent sensing grid design</li>
+    <li>V2: Prototype Bluetooth HID input translation from overlay to tablet</li>
+  </ul>
+</section>
+
+
+<!-- ── 07 Research Curriculum ── -->
+<section>
+  <div class="section-tag">07 — Research Curriculum</div>
+
+  <h2>What Needs To Be Learned</h2>
+  <p>Listed in dependency order. Each area builds directly on the one before it. Skipping the fundamentals means not understanding why the decisions at the product level were made.</p>
+
+  <h3>How Screens Work</h3>
+  <ul>
+    <li>How capacitive touchscreens detect input — the electrostatic field model</li>
+    <li>Mutual capacitance vs self capacitance — how they differ and where each is used</li>
+    <li>Sensing grids — how they're spaced and why that spacing creates the fine tip problem</li>
+    <li>Why a fine point fails without signal boosting</li>
+  </ul>
+
+  <h3>Electronics Fundamentals</h3>
+  <ul>
+    <li>Voltage, current, resistance — Ohm's Law and circuit basics</li>
+    <li>What a capacitor is and how it stores and releases charge</li>
+    <li>What an oscillator circuit is — how it generates a repeating signal</li>
+    <li>Frequency — what it means, how it's measured, why matching matters</li>
+    <li>Reading and building from circuit schematics</li>
+    <li>Breadboard prototyping — how to build circuits without soldering for testing</li>
+    <li>Basic soldering — joining components permanently</li>
+    <li>Using a multimeter — measuring voltage, current, continuity</li>
+  </ul>
+
+  <h3>Active Stylus Specific</h3>
+  <ul>
+    <li>How active stylus oscillator circuits work end to end</li>
+    <li>Capacitive coupling — how the tip transfers signal to the screen</li>
+    <li>Frequency matching — finding and targeting the right range for a specific screen</li>
+    <li>Signal boosting — why it works and how to tune it</li>
+    <li>Battery and power management — protecting a LiPo, managing draw, charge circuits</li>
+  </ul>
+
+  <h3>Materials</h3>
+  <ul>
+    <li>What makes a material conductive — electron mobility basics</li>
+    <li>Brass and copper — why they work for stylus tips and how to shape them</li>
+    <li>Metal finishing — getting a smooth, consistent fine point</li>
+  </ul>
+
+  <h3>3D Design and Fabrication</h3>
+  <ul>
+    <li>OpenSCAD or Fusion 360 — parametric design for precision tolerancing</li>
+    <li>Designing for FDM print tolerances — gaps, clearances, snap fits</li>
+    <li>Fitting electronics inside printed enclosures — thermal, spatial, and access considerations</li>
+    <li>Print settings — infill, wall thickness, orientation decisions</li>
+  </ul>
+
+  <h3>V2 — Overlay and Standards</h3>
+  <ul>
+    <li>ITO (Indium Tin Oxide) — the standard transparent conductor, how it's used in sensing films</li>
+    <li>Sensing grid design — density, spacing, detection precision tradeoffs</li>
+    <li>USI 2.0 specification — usistylus.org — the open standard for universal stylus input</li>
+    <li>Microsoft Pen Protocol — MPP, how it works on Windows devices</li>
+    <li>Bluetooth HID protocol — how the overlay communicates input back to the device as touch events</li>
+    <li>Signal processing at the controller level — translating raw stylus detection into position, pressure, tilt</li>
+  </ul>
+
+  <h3>Business and Legal</h3>
+  <ul>
+    <li>Patent research — searching existing stylus and overlay patents to understand what's protected</li>
+    <li>Small batch manufacturing basics — PCB fabrication, assembly houses, unit economics</li>
+    <li>Consumer electronics regulatory basics — FCC, CE marking, what certification a Bluetooth device requires</li>
+    <li>Shopify and direct-to-consumer sales fundamentals</li>
+    <li>Amazon seller marketplace — listing strategy, product photography, review mechanics</li>
+  </ul>
+</section>
+
+<hr>
+
+<footer>
+  <span>Project [UNNAMED] — Product Documentation v0.4</span>
+  <span>Tech Entrepreneurship · Jaden Thompson · 2026</span>
+</footer>
+
+</body>
+</html>
