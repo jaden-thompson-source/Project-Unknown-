@@ -3,733 +3,2309 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Project [UNNAMED] — Product Documentation</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Fine Tip Stylus — Dev Tools</title>
 <style>
-  :root {
-    --bg: #0a0a0a;
-    --surface: #111111;
-    --surface2: #161616;
-    --border: #1e1e1e;
-    --border2: #282828;
-    --text: #d8d8d8;
-    --muted: #4a4a4a;
-    --muted2: #666666;
-    --accent: #f0f0f0;
-    --dim: #888888;
-    --mono: 'IBM Plex Mono', monospace;
-    --body: 'IBM Plex Sans', sans-serif;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--body);
-    font-weight: 300;
-    font-size: 0.9rem;
-    line-height: 1.85;
-    max-width: 760px;
-    margin: 0 auto;
-    padding: 5rem 2.5rem 10rem;
-  }
-
-  /* ── Header ── */
-  .doc-header {
-    padding-bottom: 3.5rem;
-    margin-bottom: 3.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .doc-eyebrow {
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 2rem;
-  }
-
-  .doc-title {
-    font-family: var(--mono);
-    font-size: 1.55rem;
-    font-weight: 400;
-    color: var(--accent);
-    letter-spacing: -0.02em;
-    line-height: 1.3;
-    margin-bottom: 0.75rem;
-  }
-
-  .doc-desc {
-    font-size: 0.9rem;
-    color: var(--dim);
-    max-width: 580px;
-    line-height: 1.7;
-    margin-bottom: 2.5rem;
-  }
-
-  .meta-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    border: 1px solid var(--border);
-  }
-
-  .meta-cell {
-    padding: 0.85rem 1rem;
-    border-right: 1px solid var(--border);
-  }
-
-  .meta-cell:last-child { border-right: none; }
-
-  .meta-label {
-    font-family: var(--mono);
-    font-size: 0.55rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.3rem;
-  }
-
-  .meta-value {
-    font-family: var(--mono);
-    font-size: 0.72rem;
-    color: var(--text);
-  }
-
-  /* ── Sections ── */
-  section {
-    margin-bottom: 3.5rem;
-  }
-
-  .section-tag {
-    font-family: var(--mono);
-    font-size: 0.58rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .section-tag::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
-
-  h2 {
-    font-family: var(--mono);
-    font-size: 0.95rem;
-    font-weight: 400;
-    color: var(--accent);
-    margin-bottom: 1rem;
-    letter-spacing: -0.01em;
-  }
-
-  h3 {
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    font-weight: 400;
-    color: var(--dim);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-top: 1.8rem;
-    margin-bottom: 0.75rem;
-  }
-
-  p {
-    color: var(--text);
-    margin-bottom: 1rem;
-  }
-
-  p + p {
-    margin-top: -0.2rem;
-  }
-
-  /* ── Lists ── */
-  ul {
-    list-style: none;
-    margin-bottom: 1rem;
-  }
-
-  ul li {
-    padding: 0.25rem 0 0.25rem 1.2rem;
-    position: relative;
-    color: var(--text);
-  }
-
-  ul li::before {
-    content: '—';
-    position: absolute;
-    left: 0;
-    color: var(--muted);
-    font-family: var(--mono);
-    font-size: 0.75rem;
-  }
-
-  /* ── Tables ── */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1.2rem 0;
-    font-size: 0.82rem;
-  }
-
-  th {
-    font-family: var(--mono);
-    font-size: 0.58rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-align: left;
-    padding: 0.6rem 1rem;
-    border-bottom: 1px solid var(--border);
-    font-weight: 400;
-  }
-
-  td {
-    padding: 0.65rem 1rem;
-    border-bottom: 1px solid var(--border);
-    color: var(--text);
-    vertical-align: top;
-  }
-
-  tr:last-child td { border-bottom: none; }
-
-  /* ── Callout ── */
-  .callout {
-    border-left: 2px solid var(--border2);
-    padding: 1rem 1.25rem;
-    margin: 1.5rem 0;
-    background: var(--surface);
-    font-size: 0.85rem;
-    color: var(--dim);
-    line-height: 1.75;
-  }
-
-  .callout strong {
-    color: var(--text);
-    font-weight: 400;
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 0.4rem;
-  }
-
-  /* ── Badge ── */
-  .badge {
-    font-family: var(--mono);
-    font-size: 0.55rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 0.15rem 0.5rem;
-    border: 1px solid var(--border2);
-    color: var(--muted2);
-    margin-left: 0.5rem;
-    vertical-align: middle;
-    position: relative;
-    top: -1px;
-  }
-
-  /* ── Version block ── */
-  .version-header {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-
-  .version-tag {
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    padding: 0.2rem 0.5rem;
-  }
-
-  /* ── Divider ── */
-  hr {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 3.5rem 0;
-  }
-
-  /* ── Footer ── */
-  footer {
-    font-family: var(--mono);
-    font-size: 0.58rem;
-    color: var(--muted);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    display: flex;
-    justify-content: space-between;
-    padding-top: 2.5rem;
-    border-top: 1px solid var(--border);
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #111;
+  --bg2: #1a1a1a;
+  --bg3: #222;
+  --border: rgba(255,255,255,0.1);
+  --border2: rgba(255,255,255,0.18);
+  --text: #e8e8e8;
+  --text2: #888;
+  --text3: #555;
+  --accent-a: #378ADD;
+  --accent-b: #EF9F27;
+  --green: #1D9E75;
+  --red: #E24B4A;
+  --orange: #EF9F27;
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+body { font-family: ui-monospace, 'Cascadia Code', monospace; background: var(--bg); color: var(--text); min-height: 100vh; }
+.nav { display: flex; gap: 2px; padding: 16px 20px 0; border-bottom: 0.5px solid var(--border); }
+.nav-tab { font-size: 12px; padding: 8px 16px; border: 0.5px solid transparent; border-bottom: none; border-radius: var(--radius) var(--radius) 0 0; cursor: pointer; color: var(--text2); background: transparent; font-family: inherit; letter-spacing: 0.05em; }
+.nav-tab:hover { color: var(--text); background: var(--bg2); }
+.nav-tab.active { color: var(--text); background: var(--bg2); border-color: var(--border); }
+.page { display: none; padding: 20px; }
+.page.active { display: block; }
+.panel { background: var(--bg2); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 12px 16px; }
+.label { font-size: 11px; color: var(--text2); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+.val { font-size: 20px; font-weight: 500; color: var(--text); }
+.val-unit { font-size: 11px; color: var(--text2); margin-left: 2px; }
+.slot-label { font-size: 12px; font-weight: 500; padding: 3px 10px; border-radius: var(--radius); display: inline-block; }
+canvas { display: block; touch-action: none; cursor: crosshair; border-radius: var(--radius); }
+.btn { font-size: 12px; padding: 6px 14px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: transparent; color: var(--text); cursor: pointer; font-family: inherit; }
+.btn:hover { background: var(--bg3); }
+.btn.active { background: var(--bg3); border-color: rgba(255,255,255,0.35); }
+select { font-size: 12px; padding: 5px 10px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg2); color: var(--text); font-family: inherit; cursor: pointer; }
+.bar-track { height: 4px; background: var(--bg3); border-radius: 2px; flex: 1; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 2px; transition: width 0.1s; }
+input[type=range] { width: 100%; accent-color: var(--accent-a); }
+.row { display: flex; align-items: center; gap: 10px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
 </style>
 </head>
 <body>
 
-<!-- ── Header ── -->
-<div class="doc-header">
-  <div class="doc-eyebrow">Product Documentation · Tech Entrepreneurship · 2026</div>
-  <div class="doc-title">Project [UNNAMED]<br>Fine Tip Active Stylus + Universal Overlay System</div>
-  <p class="doc-desc">A hardware project in two phases. V1 is a fine tip active stylus for capacitive tablets — the pencil-form drawing tool that the market never built. V2 is a transparent overlay that makes any tablet compatible with precision stylus input, regardless of the hardware inside.</p>
-  <div class="meta-row">
-    <div class="meta-cell">
-      <div class="meta-label">Status</div>
-      <div class="meta-value">Concept Stage</div>
+<div style="padding: 16px 20px 0; border-bottom: 0.5px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
+  <span style="font-size:13px; font-weight:500; letter-spacing:0.06em; color:var(--text2);">FINE TIP STYLUS <span style="color:var(--text3);">/ dev tools</span></span>
+  <span style="font-size:11px; color:var(--text3);">v0.2 — pre-hardware</span>
+</div>
+
+<div class="nav" id="nav">
+  <button class="nav-tab active" onclick="switchPage('t1')">tool 1 — baseline analyzer</button>
+  <button class="nav-tab" onclick="switchPage('t2')">tool 2 — behavior simulator</button>
+  <button class="nav-tab" onclick="switchPage('t3')">tool 3 — algorithm playground</button>
+  <button class="nav-tab" onclick="switchPage('t4')">tool 4 — latency blind test</button>
+  <button class="nav-tab" onclick="switchPage('t5')">tool 5 — v1 test harness</button>
+</div>
+
+<!-- ═══════════════════════════════════════════ TOOL 1 -->
+<div class="page active" id="page-t1">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button class="btn active" id="btn-a" onclick="t1_switchSlot('A')">
+        <span class="slot-label" style="background:#0C447C22;color:#378ADD;">A</span> slot A
+      </button>
+      <button class="btn" id="btn-b" onclick="t1_switchSlot('B')">
+        <span class="slot-label" style="background:#63380622;color:#EF9F27;">B</span> slot B
+      </button>
     </div>
-    <div class="meta-cell">
-      <div class="meta-label">V1 Target Price</div>
-      <div class="meta-value">Under $30</div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn" onclick="t1_clearCurrent()">clear</button>
+      <button class="btn" onclick="t1_exportData()">export CSV</button>
     </div>
-    <div class="meta-cell">
-      <div class="meta-label">Market</div>
-      <div class="meta-value">All Tablet Users</div>
+  </div>
+  <canvas id="t1-canvas" width="1200" height="360" style="width:100%; background:var(--bg2);"></canvas>
+  <div class="grid-4" style="margin-top:12px;">
+    <div class="panel">
+      <div class="label">jitter</div>
+      <div class="val" id="t1-jitter">—<span class="val-unit">px</span></div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+        <div class="bar-track"><div class="bar-fill" id="t1-bar-jitter" style="width:0%;background:#378ADD;"></div></div>
+      </div>
     </div>
-    <div class="meta-cell">
-      <div class="meta-label">Author</div>
-      <div class="meta-value">Jaden Thompson</div>
+    <div class="panel">
+      <div class="label">smoothness</div>
+      <div class="val" id="t1-smooth">—<span class="val-unit">/1.0</span></div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+        <div class="bar-track"><div class="bar-fill" id="t1-bar-smooth" style="width:0%;background:#1D9E75;"></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="label">point rate</div>
+      <div class="val" id="t1-hz">—<span class="val-unit">Hz</span></div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+        <div class="bar-track"><div class="bar-fill" id="t1-bar-hz" style="width:0%;background:#D85A30;"></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="label">points</div>
+      <div class="val" id="t1-pts">—</div>
+      <div style="margin-top:6px;font-size:11px;color:var(--text2);" id="t1-dur">duration: —</div>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-top:10px;">
+    <div class="panel" style="background:var(--bg3);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span class="label" style="margin-bottom:0;">slot A</span>
+        <span class="slot-label" style="background:#0C447C22;color:#378ADD;font-size:11px;">A</span>
+      </div>
+      <div id="t1-hist-a" style="font-size:12px;color:var(--text2);">no strokes recorded</div>
+    </div>
+    <div class="panel" style="background:var(--bg3);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span class="label" style="margin-bottom:0;">slot B</span>
+        <span class="slot-label" style="background:#63380622;color:#EF9F27;font-size:11px;">B</span>
+      </div>
+      <div id="t1-hist-b" style="font-size:12px;color:var(--text2);">no strokes recorded</div>
+    </div>
+  </div>
+  <div style="margin-top:10px;font-size:11px;color:var(--text2);">
+    stroke color encodes speed — <span style="color:#1D9E75;">■</span> fast &nbsp;<span style="color:#EF9F27;">■</span> medium &nbsp;<span style="color:#E24B4A;">■</span> slow
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ TOOL 2 -->
+<div class="page" id="page-t2">
+  <div style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; align-items:flex-start;">
+
+    <div class="panel" style="flex:0 0 auto; min-width:200px;">
+      <div class="label">stylus profile</div>
+      <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px;">
+        <button class="btn active" id="preset-cheap"   onclick="t2_setPreset('cheap')">cheap rubber</button>
+        <button class="btn"        id="preset-pencil"  onclick="t2_setPreset('pencil')">apple pencil</button>
+        <button class="btn"        id="preset-v1"      onclick="t2_setPreset('v1')">v1 target</button>
+        <button class="btn"        id="preset-v2"      onclick="t2_setPreset('v2')">v2 target</button>
+        <button class="btn"        id="preset-custom"  onclick="t2_setPreset('custom')">custom</button>
+      </div>
+    </div>
+
+    <div class="panel" style="flex:1; min-width:260px;">
+      <div class="label" style="margin-bottom:10px;">device model parameters</div>
+
+      <div style="margin-bottom:12px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px; color:var(--text2);">sample rate</span>
+          <span style="font-size:12px; font-weight:500;" id="t2-lbl-srate">120 Hz</span>
+        </div>
+        <input type="range" min="30" max="360" step="10" value="120" id="sl-srate" oninput="t2_onSlider()">
+        <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text3); margin-top:2px;">
+          <span>30 Hz</span><span>180 Hz</span><span>360 Hz</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px; color:var(--text2);">latency (fixed)</span>
+          <span style="font-size:12px; font-weight:500;" id="t2-lbl-lat">12 ms</span>
+        </div>
+        <input type="range" min="0" max="120" step="1" value="12" id="sl-lat" oninput="t2_onSlider()">
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px; color:var(--text2);">latency jitter (±)</span>
+          <span style="font-size:12px; font-weight:500;" id="t2-lbl-latjitter">0 ms</span>
+        </div>
+        <input type="range" min="0" max="30" step="1" value="0" id="sl-latjitter" oninput="t2_onSlider()">
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px; color:var(--text2);">noise amplitude</span>
+          <span style="font-size:12px; font-weight:500;" id="t2-lbl-noise">2.0 px</span>
+        </div>
+        <input type="range" min="0" max="20" step="0.5" value="2" id="sl-noise" oninput="t2_onSlider()">
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px; color:var(--text2);">noise frequency</span>
+          <span style="font-size:12px; font-weight:500;" id="t2-lbl-noisefreq">0.05</span>
+        </div>
+        <input type="range" min="0.005" max="0.3" step="0.005" value="0.05" id="sl-noisefreq" oninput="t2_onSlider()">
+        <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text3); margin-top:2px;">
+          <span>slow drift</span><span>fast wobble</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px; color:var(--text2);">pos filter (1€ β)</span>
+          <span style="font-size:12px; font-weight:500;" id="t2-lbl-beta">0.007</span>
+        </div>
+        <input type="range" min="0.0" max="0.1" step="0.001" value="0.007" id="sl-beta" oninput="t2_onSlider()">
+        <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text3); margin-top:2px;">
+          <span>more lag</span><span>less lag (more noise)</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px; color:var(--text2);">pos filter (1€ min_cutoff)</span>
+          <span style="font-size:12px; font-weight:500;" id="t2-lbl-mincutoff">1.0 Hz</span>
+        </div>
+        <input type="range" min="0.1" max="10" step="0.1" value="1.0" id="sl-mincutoff" oninput="t2_onSlider()">
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px; color:var(--text2);">pressure curve</span>
+          <span style="font-size:12px; font-weight:500;" id="t2-lbl-pcurve">linear</span>
+        </div>
+        <input type="range" min="-2" max="2" step="0.1" value="0" id="sl-pcurve" oninput="t2_onSlider()">
+        <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text3); margin-top:2px;">
+          <span>heavy log</span><span>linear</span><span>light exp</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px; color:var(--text2);">pressure smoothing (1€ β)</span>
+          <span style="font-size:12px; font-weight:500;" id="t2-lbl-psmooth">0.01</span>
+        </div>
+        <input type="range" min="0.0" max="0.2" step="0.005" value="0.01" id="sl-psmooth" oninput="t2_onSlider()">
+      </div>
+    </div>
+
+    <div class="panel" style="flex:0 0 auto;">
+      <div class="label" style="margin-bottom:8px;">pressure curve</div>
+      <canvas id="t2-curve-canvas" width="120" height="120" style="cursor:default; border-radius:4px; background:var(--bg3);"></canvas>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+    <div>
+      <div style="font-size:11px; color:var(--text2); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px;">raw input</div>
+      <canvas id="t2-raw-canvas" width="600" height="300" style="width:100%; background:var(--bg2);"></canvas>
+    </div>
+    <div>
+      <div style="font-size:11px; color:var(--text2); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px;">simulated output <span style="color:var(--text3); font-size:10px;" id="t2-latency-indicator"></span></div>
+      <canvas id="t2-sim-canvas" width="600" height="300" style="width:100%; background:var(--bg2);"></canvas>
+    </div>
+  </div>
+
+  <div class="grid-4" style="margin-bottom:10px;">
+    <div class="panel">
+      <div class="label">sim jitter</div>
+      <div class="val" id="t2-m-jitter">—<span class="val-unit">px</span></div>
+    </div>
+    <div class="panel">
+      <div class="label">latency lag</div>
+      <div class="val" id="t2-m-lat">—<span class="val-unit">ms</span></div>
+    </div>
+    <div class="panel">
+      <div class="label">avg line width</div>
+      <div class="val" id="t2-m-lw">—<span class="val-unit">px</span></div>
+    </div>
+    <div class="panel">
+      <div class="label">smoothness</div>
+      <div class="val" id="t2-m-smooth">—<span class="val-unit">/1.0</span></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="panel" style="background:var(--bg3);">
+      <div class="label" style="margin-bottom:8px;">stroke history — raw</div>
+      <div id="t2-hist-raw" style="font-size:12px;color:var(--text2);">no strokes recorded</div>
+    </div>
+    <div class="panel" style="background:var(--bg3);">
+      <div class="label" style="margin-bottom:8px;">stroke history — simulated</div>
+      <div id="t2-hist-sim" style="font-size:12px;color:var(--text2);">no strokes recorded</div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+    <div style="font-size:11px; color:var(--text2);">
+      draw on either canvas — input is resampled to device rate, latency is real delay, noise is correlated random walk
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn" onclick="t2_clear()">clear</button>
+      <button class="btn" onclick="t2_exportCSV()">export CSV</button>
     </div>
   </div>
 </div>
 
+<script>
+// ═══════════════════════════════════════════════════════════════
+// SHARED
+// ═══════════════════════════════════════════════════════════════
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  if (id === 't1') tabs[0].classList.add('active');
+  if (id === 't2') tabs[1].classList.add('active');
+  if (id === 't3') tabs[2].classList.add('active');
+  if (id === 't4') tabs[3].classList.add('active');
+  if (id === 't5') tabs[4].classList.add('active');
+}
 
-<!-- ── 01 Overview ── -->
-<section>
-  <div class="section-tag">01 — Overview</div>
+// ═══════════════════════════════════════════════════════════════
+// TOOL 1 — BASELINE ANALYZER
+// ═══════════════════════════════════════════════════════════════
+const t1_canvas = document.getElementById('t1-canvas');
+const t1_ctx    = t1_canvas.getContext('2d');
+let t1_slot = 'A';
+let t1_active = false;
+let t1_buffer = [];
+let t1_strokes    = { A: [], B: [] };
+let t1_allMetrics = { A: [], B: [] };
 
-  <h2>The Problem</h2>
-  <p>Capacitive touchscreens were built to detect fingers. A finger is wide — it disrupts enough sensing points that the screen registers it instantly. A pencil tip is too small. It falls between sensing grid lines and the screen either ignores it or misregisters it entirely.</p>
-  <p>So the market built styluses around the screen's limitation instead of solving it. Every affordable stylus has a wide rubber blob, a flat disc, or some other tip that exists purely because the screen can't detect anything smaller. Nobody built the actual pencil.</p>
-  <p>Premium styluses like the Apple Pencil solve this — they use an active signal and modified screen hardware to detect a fine tip. But they're locked to specific recent devices, cost $99–$129, and leave anyone with an older or non-Apple tablet with no real option. The budget tier is unusable. The premium tier is gated. Nothing exists in between.</p>
+function t1_switchSlot(s) {
+  t1_slot = s;
+  document.getElementById('btn-a').className = s==='A' ? 'btn active' : 'btn';
+  document.getElementById('btn-b').className = s==='B' ? 'btn active' : 'btn';
+  t1_renderCanvas();
+  t1_updateHistogram();
+}
 
-  <div class="callout">
-    <strong>Origin</strong>
-    This started as a personal problem. Drawing on an older iPad Air 2, every stylus under $30 had a tip that made precision work impossible. After researching why — capacitive screen physics, how active styluses work, why fine tips fail — the gap was clear. A fine tip active stylus under $30 for any capacitive screen does not exist. This project builds it.
+function t1_clearCurrent() {
+  t1_strokes[t1_slot] = [];
+  t1_allMetrics[t1_slot] = [];
+  t1_renderCanvas();
+  t1_updateHistogram();
+  t1_resetMetrics();
+}
+
+function t1_getXY(e, rect) {
+  const sx = t1_canvas.width / rect.width, sy = t1_canvas.height / rect.height;
+  if (e.touches) return { x:(e.touches[0].clientX-rect.left)*sx, y:(e.touches[0].clientY-rect.top)*sy, pressure:e.touches[0].force||0.5 };
+  return { x:(e.clientX-rect.left)*sx, y:(e.clientY-rect.top)*sy, pressure:e.pressure||0.5 };
+}
+
+t1_canvas.addEventListener('pointerdown', e => {
+  e.preventDefault(); t1_canvas.setPointerCapture(e.pointerId);
+  t1_active = true; t1_buffer = [];
+  const r = t1_canvas.getBoundingClientRect();
+  const {x,y,pressure} = t1_getXY(e,r);
+  t1_buffer.push({x,y,pressure,t:performance.now()});
+});
+t1_canvas.addEventListener('pointermove', e => {
+  if (!t1_active) return; e.preventDefault();
+  const r = t1_canvas.getBoundingClientRect();
+  const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+  for (const ev of evs) { const {x,y,pressure} = t1_getXY(ev,r); t1_buffer.push({x,y,pressure,t:performance.now()}); }
+  t1_renderLive();
+  if (t1_buffer.length > 2) t1_updateMetrics(t1_buffer);
+});
+t1_canvas.addEventListener('pointerup', e => {
+  if (!t1_active) return; t1_active = false;
+  if (t1_buffer.length > 3) {
+    t1_strokes[t1_slot].push([...t1_buffer]);
+    t1_allMetrics[t1_slot].push(t1_computeMetrics(t1_buffer));
+    t1_updateHistogram();
+  }
+  t1_buffer = [];
+});
+
+function t1_computeJitter(pts) {
+  if (pts.length < 3) return 0;
+  const devs = [];
+  for (let i=1; i<pts.length-1; i++) {
+    const a=pts[i-1],b=pts[i+1],p=pts[i];
+    const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy);
+    if (len<0.001) continue;
+    devs.push(Math.abs(dy*p.x-dx*p.y+b.x*a.y-b.y*a.x)/len);
+  }
+  if (!devs.length) return 0;
+  const mean = devs.reduce((s,v)=>s+v,0)/devs.length;
+  return Math.sqrt(devs.reduce((s,v)=>s+(v-mean)**2,0)/devs.length);
+}
+
+function t1_computeSmoothness(pts) {
+  if (pts.length < 3) return 1;
+  const angles = [];
+  for (let i=1; i<pts.length-1; i++) {
+    const v1={x:pts[i].x-pts[i-1].x,y:pts[i].y-pts[i-1].y};
+    const v2={x:pts[i+1].x-pts[i].x,y:pts[i+1].y-pts[i].y};
+    const dot=v1.x*v2.x+v1.y*v2.y, mag=Math.hypot(v1.x,v1.y)*Math.hypot(v2.x,v2.y);
+    if (mag<0.001) continue;
+    angles.push(Math.acos(Math.max(-1,Math.min(1,dot/mag))));
+  }
+  if (!angles.length) return 1;
+  return Math.max(0, 1-angles.reduce((s,v)=>s+v,0)/angles.length/Math.PI);
+}
+
+function t1_computeMetrics(pts) {
+  const dur = pts.length>1 ? pts[pts.length-1].t-pts[0].t : 0;
+  return { jitter:t1_computeJitter(pts), smoothness:t1_computeSmoothness(pts), hz:dur>0?(pts.length/dur)*1000:0, dur, count:pts.length };
+}
+
+function t1_speedColor(v,max) {
+  const r = Math.min(v/(max||1),1);
+  return r>0.6 ? '#1D9E75' : r>0.3 ? '#EF9F27' : '#E24B4A';
+}
+
+function t1_drawStroke(pts,alpha) {
+  if (pts.length<2) return;
+  t1_ctx.globalAlpha = alpha||0.85;
+  let max=0; const sp=[];
+  for (let i=1;i<pts.length;i++) { const dt=pts[i].t-pts[i-1].t,ds=Math.hypot(pts[i].x-pts[i-1].x,pts[i].y-pts[i-1].y),v=dt>0?ds/dt:0; sp.push(v); if(v>max)max=v; }
+  for (let i=1;i<pts.length;i++) {
+    t1_ctx.beginPath(); t1_ctx.moveTo(pts[i-1].x,pts[i-1].y); t1_ctx.lineTo(pts[i].x,pts[i].y);
+    t1_ctx.strokeStyle=t1_speedColor(sp[i-1],max); t1_ctx.lineWidth=2; t1_ctx.lineCap='round'; t1_ctx.stroke();
+  }
+  t1_ctx.globalAlpha=1;
+}
+
+function t1_renderCanvas() {
+  t1_ctx.clearRect(0,0,t1_canvas.width,t1_canvas.height);
+  t1_strokes.A.forEach(s=>t1_drawStroke(s,0.8));
+  t1_strokes.B.forEach(s=>t1_drawStroke(s,0.8));
+}
+
+function t1_renderLive() {
+  t1_renderCanvas();
+  if (t1_buffer.length>1) t1_drawStroke(t1_buffer,1);
+}
+
+function t1_updateMetrics(pts) {
+  const m = t1_computeMetrics(pts);
+  document.getElementById('t1-jitter').innerHTML = m.jitter.toFixed(2)+'<span class="val-unit">px</span>';
+  document.getElementById('t1-smooth').innerHTML = m.smoothness.toFixed(2)+'<span class="val-unit">/1.0</span>';
+  document.getElementById('t1-hz').innerHTML = Math.round(m.hz)+'<span class="val-unit">Hz</span>';
+  document.getElementById('t1-pts').textContent = m.count;
+  document.getElementById('t1-dur').textContent = 'duration: '+Math.round(m.dur)+'ms';
+  document.getElementById('t1-bar-jitter').style.width = Math.min(m.jitter*20,100)+'%';
+  document.getElementById('t1-bar-smooth').style.width = (m.smoothness*100)+'%';
+  document.getElementById('t1-bar-hz').style.width = Math.min(m.hz/2,100)+'%';
+}
+
+function t1_resetMetrics() {
+  ['t1-jitter','t1-smooth','t1-hz'].forEach(id=>{
+    const unit = id.includes('jitter')?'px':id.includes('smooth')?'/1.0':'Hz';
+    document.getElementById(id).innerHTML='—<span class="val-unit">'+unit+'</span>';
+  });
+  document.getElementById('t1-pts').textContent='—';
+  document.getElementById('t1-dur').textContent='duration: —';
+  ['t1-bar-jitter','t1-bar-smooth','t1-bar-hz'].forEach(id=>document.getElementById(id).style.width='0%');
+}
+
+function t1_updateHistogram() {
+  ['A','B'].forEach(s=>{
+    const el = document.getElementById('t1-hist-'+s.toLowerCase());
+    const ms = t1_allMetrics[s];
+    if (!ms.length){ el.textContent='no strokes recorded'; return; }
+    const aJ=ms.reduce((a,m)=>a+m.jitter,0)/ms.length;
+    const aS=ms.reduce((a,m)=>a+m.smoothness,0)/ms.length;
+    const aH=ms.reduce((a,m)=>a+m.hz,0)/ms.length;
+    el.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;"><span style="color:var(--text2)">strokes</span><span>${ms.length}</span><span style="color:var(--text2)">avg jitter</span><span>${aJ.toFixed(2)}px</span><span style="color:var(--text2)">avg smooth</span><span>${aS.toFixed(2)}</span><span style="color:var(--text2)">avg Hz</span><span>${Math.round(aH)}</span></div>`;
+  });
+}
+
+function t1_exportData() {
+  const rows = ['slot,stroke,jitter_px,smoothness,hz,duration_ms,point_count'];
+  ['A','B'].forEach(s=>t1_allMetrics[s].forEach((m,i)=>rows.push(`${s},${i+1},${m.jitter.toFixed(3)},${m.smoothness.toFixed(3)},${m.hz.toFixed(1)},${m.dur.toFixed(0)},${m.count}`)));
+  const a = document.createElement('a'); a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'})); a.download='t1-baseline.csv'; a.click();
+}
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// TOOL 2 — BEHAVIOR SIMULATOR
+// ═══════════════════════════════════════════════════════════════
+
+const T2_PRESETS = {
+  cheap:  { srate:60,  lat:40, latJitter:8,  noise:8,   noiseFreq:0.15, beta:0.0,   minCutoff:1.0, pcurve:0.8,  psmooth:0.0,  label:'cheap rubber' },
+  pencil: { srate:240, lat:3,  latJitter:0.5,noise:0.3, noiseFreq:0.03, beta:0.007, minCutoff:1.0, pcurve:-0.3, psmooth:0.02, label:'apple pencil' },
+  v1:     { srate:120, lat:12, latJitter:2,  noise:1.5, noiseFreq:0.05, beta:0.007, minCutoff:1.0, pcurve:0,    psmooth:0.01, label:'v1 target' },
+  v2:     { srate:240, lat:5,  latJitter:1,  noise:0.4, noiseFreq:0.03, beta:0.007, minCutoff:1.5, pcurve:-0.1, psmooth:0.01, label:'v2 target' },
+  custom: { srate:120, lat:12, latJitter:0,  noise:2,   noiseFreq:0.05, beta:0.007, minCutoff:1.0, pcurve:0,    psmooth:0.01, label:'custom' },
+};
+
+let t2_params = { ...T2_PRESETS.cheap };
+
+const t2_rawCanvas  = document.getElementById('t2-raw-canvas');
+const t2_simCanvas  = document.getElementById('t2-sim-canvas');
+const t2_rawCtx     = t2_rawCanvas.getContext('2d');
+const t2_simCtx     = t2_simCanvas.getContext('2d');
+const t2_curveCanvas= document.getElementById('t2-curve-canvas');
+const t2_curveCtx   = t2_curveCanvas.getContext('2d');
+
+let t2_pointerPath = [];
+let t2_resampledPath = [];
+let t2_simQueue = [];
+let t2_simRendered = [];
+let t2_rawRendered = [];
+let t2_drawing = false;
+let t2_rafId   = null;
+let t2_strokeStartWall = 0;
+let t2_rawStrokeHistory = [];
+let t2_simStrokeHistory = [];
+let t2_rawMetricsHistory = [];
+let t2_simMetricsHistory = [];
+
+let t2_noiseState = { x: 0, y: 0 };
+function t2_resetNoise() { t2_noiseState = { x: 0, y: 0 }; }
+
+function t2_noiseStep(freq) {
+  t2_noiseState.x += (Math.random()-0.5) * 2 * freq;
+  t2_noiseState.y += (Math.random()-0.5) * 2 * freq;
+  t2_noiseState.x *= 0.98;
+  t2_noiseState.y *= 0.98;
+  return { dx: t2_noiseState.x, dy: t2_noiseState.y };
+}
+
+function makeOneEuroFilter(minCutoff, beta, dCutoff) {
+  dCutoff = dCutoff || 1.0;
+  let xPrev = null, dxPrev = 0, tPrev = null;
+  function alpha(cutoff, dt) {
+    const tau = 1.0 / (2 * Math.PI * cutoff);
+    return 1.0 / (1.0 + tau / dt);
+  }
+  return {
+    reset() { xPrev=null; dxPrev=0; tPrev=null; },
+    filter(x, t_ms) {
+      const t = t_ms / 1000;
+      if (xPrev === null) { xPrev=x; tPrev=t; return x; }
+      const dt = Math.max(t - tPrev, 1e-6);
+      tPrev = t;
+      const dx = (x - xPrev) / dt;
+      const a_d = alpha(dCutoff, dt);
+      const dxHat = a_d * dx + (1 - a_d) * dxPrev;
+      dxPrev = dxHat;
+      const cutoff = minCutoff + beta * Math.abs(dxHat);
+      const a = alpha(cutoff, dt);
+      const xHat = a * x + (1 - a) * xPrev;
+      xPrev = xHat;
+      return xHat;
+    }
+  };
+}
+
+let t2_filterX = makeOneEuroFilter(1.0, 0.007);
+let t2_filterY = makeOneEuroFilter(1.0, 0.007);
+let t2_filterP = makeOneEuroFilter(3.0, 0.01);
+
+function t2_resetFilters() {
+  t2_filterX = makeOneEuroFilter(t2_params.minCutoff, t2_params.beta);
+  t2_filterY = makeOneEuroFilter(t2_params.minCutoff, t2_params.beta);
+  t2_filterP = makeOneEuroFilter(3.0, t2_params.psmooth);
+}
+
+function t2_applyPressureCurve(p) {
+  const cv = t2_params.pcurve;
+  p = Math.max(0, Math.min(1, p));
+  if (Math.abs(cv) < 0.05) return p;
+  if (cv > 0) return Math.pow(p, 1 + cv*2);
+  return 1 - Math.pow(1-p, 1 + (-cv)*2);
+}
+
+function catmullRom(p0, p1, p2, p3, t) {
+  return 0.5 * (
+    (2*p1) +
+    (-p0 + p2) * t +
+    (2*p0 - 5*p1 + 4*p2 - p3) * t*t +
+    (-p0 + 3*p1 - 3*p2 + p3) * t*t*t
+  );
+}
+
+function t2_resamplePath(path, srate) {
+  if (path.length < 2) return path.length===1 ? [...path] : [];
+  const interval = 1000 / srate;
+  const tStart = path[0].t;
+  const tEnd   = path[path.length-1].t;
+  const result = [];
+  for (let tSample = tStart; tSample <= tEnd; tSample += interval) {
+    let i = 1;
+    while (i < path.length-1 && path[i].t < tSample) i++;
+    const p1 = path[i-1];
+    const p2 = path[i];
+    const dt = p2.t - p1.t;
+    const u  = dt > 0 ? (tSample - p1.t) / dt : 0;
+    const p0 = path[Math.max(0, i-2)];
+    const p3 = path[Math.min(path.length-1, i+1)];
+    const x = catmullRom(p0.x, p1.x, p2.x, p3.x, u);
+    const y = catmullRom(p0.y, p1.y, p2.y, p3.y, u);
+    const pressure = catmullRom(p0.pressure||0.5, p1.pressure||0.5, p2.pressure||0.5, p3.pressure||0.5, u);
+    result.push({ x, y, pressure: Math.max(0,Math.min(1,pressure)), t: tSample });
+  }
+  return result;
+}
+
+function t2_canvasXY(e, canvas) {
+  const rect = canvas.getBoundingClientRect();
+  const sx = canvas.width  / rect.width;
+  const sy = canvas.height / rect.height;
+  const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+  return evs.map(ev => ({
+    x: (ev.clientX - rect.left) * sx,
+    y: (ev.clientY - rect.top)  * sy,
+    pressure: ev.pressure || 0.5,
+    t: ev.timeStamp
+  }));
+}
+
+function t2_rafLoop(now) {
+  let newPoints = false;
+  while (t2_simQueue.length && t2_simQueue[0].releaseAt <= now) {
+    const pt = t2_simQueue.shift();
+    if (t2_simRendered.length > 0) {
+      t2_drawSimSegment(t2_simRendered[t2_simRendered.length-1], pt);
+    }
+    t2_simRendered.push(pt);
+    newPoints = true;
+  }
+  if (newPoints && t2_simRendered.length > 1) t2_updateLiveMetrics();
+  if (t2_drawing || t2_simQueue.length > 0) {
+    t2_rafId = requestAnimationFrame(t2_rafLoop);
+  } else {
+    t2_rafId = null;
+  }
+}
+
+function t2_startRaf() {
+  if (!t2_rafId) t2_rafId = requestAnimationFrame(t2_rafLoop);
+}
+
+function t2_processResampledPoint(pt) {
+  const {dx,dy} = t2_noiseStep(t2_params.noiseFreq);
+  const noisyX = pt.x + dx * t2_params.noise;
+  const noisyY = pt.y + dy * t2_params.noise;
+  const filtX = t2_filterX.filter(noisyX, pt.t);
+  const filtY = t2_filterY.filter(noisyY, pt.t);
+  const curvedP  = t2_applyPressureCurve(pt.pressure);
+  const filtP    = t2_filterP.filter(curvedP, pt.t);
+  const lineWidth = 1 + filtP * 3;
+  const latSample = t2_params.lat + (Math.random()-0.5)*2*t2_params.latJitter;
+  const releaseAt = pt.t + Math.max(0, latSample);
+  t2_simQueue.push({ x:filtX, y:filtY, pressure:filtP, lineWidth, releaseAt });
+}
+
+function t2_onPointerDown(e, canvas) {
+  e.preventDefault();
+  canvas.setPointerCapture(e.pointerId);
+  t2_drawing = true;
+  t2_pointerPath = []; t2_resampledPath = [];
+  t2_simQueue = []; t2_simRendered = []; t2_rawRendered = [];
+  t2_resetNoise(); t2_resetFilters();
+  const pts = t2_canvasXY(e, canvas);
+  t2_pointerPath.push(...pts);
+  for (const p of pts) {
+    t2_rawCtx.beginPath();
+    t2_rawCtx.arc(p.x, p.y, (1+p.pressure*3)/2, 0, Math.PI*2);
+    t2_rawCtx.fillStyle='#378ADD'; t2_rawCtx.fill();
+    t2_rawRendered.push(p);
+  }
+  t2_startRaf();
+}
+
+function t2_onPointerMove(e, canvas) {
+  if (!t2_drawing) return;
+  e.preventDefault();
+  const pts = t2_canvasXY(e, canvas);
+  t2_pointerPath.push(...pts);
+  for (let i=0; i<pts.length; i++) {
+    const prev = t2_rawRendered.length ? t2_rawRendered[t2_rawRendered.length-1] : null;
+    if (prev) {
+      t2_rawCtx.beginPath(); t2_rawCtx.moveTo(prev.x,prev.y); t2_rawCtx.lineTo(pts[i].x,pts[i].y);
+      t2_rawCtx.strokeStyle='#378ADD'; t2_rawCtx.lineWidth=1+(pts[i].pressure||0.5)*3;
+      t2_rawCtx.lineCap='round'; t2_rawCtx.stroke();
+    }
+    t2_rawRendered.push(pts[i]);
+  }
+  const prev_count = t2_resampledPath.length;
+  t2_resampledPath = t2_resamplePath(t2_pointerPath, t2_params.srate);
+  for (let i = prev_count; i < t2_resampledPath.length; i++) {
+    t2_processResampledPoint(t2_resampledPath[i]);
+  }
+}
+
+function t2_onPointerUp(e, canvas) {
+  if (!t2_drawing) return;
+  t2_drawing = false;
+  const prev_count = t2_resampledPath.length;
+  t2_resampledPath = t2_resamplePath(t2_pointerPath, t2_params.srate);
+  for (let i = prev_count; i < t2_resampledPath.length; i++) {
+    t2_processResampledPoint(t2_resampledPath[i]);
+  }
+  t2_startRaf();
+  setTimeout(() => {
+    if (t2_resampledPath.length > 3) {
+      t2_rawStrokeHistory.push([...t2_resampledPath]);
+      t2_simStrokeHistory.push([...t2_simRendered]);
+      t2_rawMetricsHistory.push(t2_computeMetrics(t2_resampledPath));
+      t2_simMetricsHistory.push(t2_computeMetrics(t2_simRendered));
+      t2_updateHistory();
+    }
+  }, t2_params.lat + t2_params.latJitter + 100);
+}
+
+[t2_rawCanvas, t2_simCanvas].forEach(cv => {
+  cv.addEventListener('pointerdown', e => t2_onPointerDown(e, cv));
+  cv.addEventListener('pointermove', e => t2_onPointerMove(e, cv));
+  cv.addEventListener('pointerup',   e => t2_onPointerUp(e, cv));
+});
+
+function t2_drawSimSegment(a, b) {
+  t2_simCtx.beginPath(); t2_simCtx.moveTo(a.x,a.y); t2_simCtx.lineTo(b.x,b.y);
+  t2_simCtx.strokeStyle='#EF9F27';
+  t2_simCtx.lineWidth = b.lineWidth || 1.5;
+  t2_simCtx.lineCap='round'; t2_simCtx.stroke();
+}
+
+function t2_computeJitter(pts) {
+  if (pts.length < 3) return 0;
+  const devs = [];
+  for (let i=1;i<pts.length-1;i++) {
+    const a=pts[i-1],b=pts[i+1],p=pts[i];
+    const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy);
+    if (len<0.001) continue;
+    devs.push(Math.abs(dy*p.x-dx*p.y+b.x*a.y-b.y*a.x)/len);
+  }
+  if (!devs.length) return 0;
+  const mean=devs.reduce((s,v)=>s+v,0)/devs.length;
+  return Math.sqrt(devs.reduce((s,v)=>s+(v-mean)**2,0)/devs.length);
+}
+
+function t2_computeSmoothness(pts) {
+  if (pts.length<3) return 1;
+  const angles=[];
+  for (let i=1;i<pts.length-1;i++) {
+    const v1={x:pts[i].x-pts[i-1].x,y:pts[i].y-pts[i-1].y};
+    const v2={x:pts[i+1].x-pts[i].x,y:pts[i+1].y-pts[i].y};
+    const dot=v1.x*v2.x+v1.y*v2.y,mag=Math.hypot(v1.x,v1.y)*Math.hypot(v2.x,v2.y);
+    if (mag<0.001) continue;
+    angles.push(Math.acos(Math.max(-1,Math.min(1,dot/mag))));
+  }
+  if (!angles.length) return 1;
+  return Math.max(0,1-angles.reduce((s,v)=>s+v,0)/angles.length/Math.PI);
+}
+
+function t2_computeMetrics(pts) {
+  const dur = pts.length>1 ? pts[pts.length-1].t-pts[0].t : 0;
+  const hz  = dur>0 ? (pts.length/dur)*1000 : 0;
+  return { jitter:t2_computeJitter(pts), smoothness:t2_computeSmoothness(pts), hz, dur, count:pts.length };
+}
+
+function t2_avgLineWidth(pts) {
+  if (!pts.length) return 0;
+  return pts.reduce((s,p)=>s+(p.lineWidth||1+(p.pressure||0.5)*3),0)/pts.length;
+}
+
+function t2_updateLiveMetrics() {
+  if (t2_simRendered.length < 2) return;
+  const m  = t2_computeMetrics(t2_simRendered);
+  const lw = t2_avgLineWidth(t2_simRendered);
+  document.getElementById('t2-m-jitter').innerHTML = m.jitter.toFixed(2)+'<span class="val-unit">px</span>';
+  document.getElementById('t2-m-lat').innerHTML    = Math.round(t2_params.lat)+'<span class="val-unit">ms</span>';
+  document.getElementById('t2-m-lw').innerHTML     = lw.toFixed(1)+'<span class="val-unit">px</span>';
+  document.getElementById('t2-m-smooth').innerHTML = m.smoothness.toFixed(2)+'<span class="val-unit">/1.0</span>';
+}
+
+function t2_updateHistory() {
+  function fmt(el, metrics) {
+    if (!metrics.length) { el.textContent='no strokes recorded'; return; }
+    const last=metrics[metrics.length-1];
+    const avgJ=metrics.reduce((a,m)=>a+m.jitter,0)/metrics.length;
+    const avgS=metrics.reduce((a,m)=>a+m.smoothness,0)/metrics.length;
+    el.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;"><span style="color:var(--text2)">strokes</span><span>${metrics.length}</span><span style="color:var(--text2)">last jitter</span><span>${last.jitter.toFixed(2)}px</span><span style="color:var(--text2)">avg jitter</span><span>${avgJ.toFixed(2)}px</span><span style="color:var(--text2)">avg smooth</span><span>${avgS.toFixed(2)}</span></div>`;
+  }
+  fmt(document.getElementById('t2-hist-raw'), t2_rawMetricsHistory);
+  fmt(document.getElementById('t2-hist-sim'), t2_simMetricsHistory);
+}
+
+function t2_setPreset(key) {
+  document.querySelectorAll('[id^="preset-"]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('preset-'+key).classList.add('active');
+  t2_params = { ...T2_PRESETS[key] };
+  document.getElementById('sl-srate').value    = t2_params.srate;
+  document.getElementById('sl-lat').value      = t2_params.lat;
+  document.getElementById('sl-latjitter').value= t2_params.latJitter;
+  document.getElementById('sl-noise').value    = t2_params.noise;
+  document.getElementById('sl-noisefreq').value= t2_params.noiseFreq;
+  document.getElementById('sl-beta').value     = t2_params.beta;
+  document.getElementById('sl-mincutoff').value= t2_params.minCutoff;
+  document.getElementById('sl-pcurve').value   = t2_params.pcurve;
+  document.getElementById('sl-psmooth').value  = t2_params.psmooth;
+  t2_updateLabels();
+  t2_drawCurve();
+}
+
+function t2_onSlider() {
+  t2_params.srate      = parseFloat(document.getElementById('sl-srate').value);
+  t2_params.lat        = parseFloat(document.getElementById('sl-lat').value);
+  t2_params.latJitter  = parseFloat(document.getElementById('sl-latjitter').value);
+  t2_params.noise      = parseFloat(document.getElementById('sl-noise').value);
+  t2_params.noiseFreq  = parseFloat(document.getElementById('sl-noisefreq').value);
+  t2_params.beta       = parseFloat(document.getElementById('sl-beta').value);
+  t2_params.minCutoff  = parseFloat(document.getElementById('sl-mincutoff').value);
+  t2_params.pcurve     = parseFloat(document.getElementById('sl-pcurve').value);
+  t2_params.psmooth    = parseFloat(document.getElementById('sl-psmooth').value);
+  document.getElementById('preset-custom').classList.add('active');
+  document.querySelectorAll('[id^="preset-"]:not(#preset-custom)').forEach(b=>b.classList.remove('active'));
+  t2_updateLabels();
+  t2_drawCurve();
+}
+
+function t2_updateLabels() {
+  document.getElementById('t2-lbl-srate').textContent    = Math.round(t2_params.srate)+' Hz';
+  document.getElementById('t2-lbl-lat').textContent      = Math.round(t2_params.lat)+' ms';
+  document.getElementById('t2-lbl-latjitter').textContent= '±'+Math.round(t2_params.latJitter)+' ms';
+  document.getElementById('t2-lbl-noise').textContent    = t2_params.noise.toFixed(1)+' px';
+  document.getElementById('t2-lbl-noisefreq').textContent= t2_params.noiseFreq.toFixed(3);
+  document.getElementById('t2-lbl-beta').textContent     = t2_params.beta.toFixed(3);
+  document.getElementById('t2-lbl-mincutoff').textContent= t2_params.minCutoff.toFixed(1)+' Hz';
+  const cv = t2_params.pcurve;
+  document.getElementById('t2-lbl-pcurve').textContent   = cv < -0.5 ? 'log (light touch)' : cv > 0.5 ? 'exp (heavy)' : 'linear';
+  document.getElementById('t2-lbl-psmooth').textContent  = t2_params.psmooth.toFixed(3);
+  document.getElementById('t2-latency-indicator').textContent = '('+Math.round(t2_params.lat)+'ms delay)';
+}
+
+function t2_drawCurve() {
+  const c=t2_curveCtx, w=120, h=120;
+  c.clearRect(0,0,w,h);
+  c.strokeStyle='#333'; c.lineWidth=0.5;
+  c.strokeRect(0.5,0.5,w-1,h-1);
+  c.setLineDash([3,3]); c.beginPath(); c.moveTo(0,h); c.lineTo(w,0); c.stroke();
+  c.setLineDash([]);
+  c.strokeStyle='#EF9F27'; c.lineWidth=2;
+  c.beginPath();
+  const cv=t2_params.pcurve;
+  for (let i=0;i<=60;i++) {
+    const x=i/60; let y;
+    if (Math.abs(cv)<0.05) y=x;
+    else if (cv>0) y=Math.pow(x,1+cv*2);
+    else y=1-Math.pow(1-x,1+(-cv)*2);
+    i===0 ? c.moveTo(x*w,(1-y)*h) : c.lineTo(x*w,(1-y)*h);
+  }
+  c.stroke();
+  c.fillStyle='#555'; c.font='9px monospace';
+  c.fillText('in',2,h-2); c.fillText('out',2,9);
+}
+
+function t2_clear() {
+  t2_rawCtx.clearRect(0,0,t2_rawCanvas.width,t2_rawCanvas.height);
+  t2_simCtx.clearRect(0,0,t2_simCanvas.width,t2_simCanvas.height);
+  t2_rawStrokeHistory=[]; t2_simStrokeHistory=[];
+  t2_rawMetricsHistory=[]; t2_simMetricsHistory=[];
+  t2_simQueue=[]; t2_simRendered=[]; t2_rawRendered=[];
+  t2_pointerPath=[]; t2_resampledPath=[];
+  t2_updateHistory();
+  ['t2-m-jitter','t2-m-lat','t2-m-lw','t2-m-smooth'].forEach(id=>document.getElementById(id).innerHTML='—');
+}
+
+function t2_exportCSV() {
+  const rows=['type,stroke,jitter_px,smoothness,hz,duration_ms,point_count,srate,latency_ms,lat_jitter,noise_px,noise_freq,beta,min_cutoff,pcurve,psmooth'];
+  const p=t2_params;
+  const extra=`${p.srate},${p.lat},${p.latJitter},${p.noise},${p.noiseFreq},${p.beta},${p.minCutoff},${p.pcurve},${p.psmooth}`;
+  t2_rawMetricsHistory.forEach((m,i)=>rows.push(`raw,${i+1},${m.jitter.toFixed(3)},${m.smoothness.toFixed(3)},${m.hz.toFixed(1)},${m.dur.toFixed(0)},${m.count},${extra}`));
+  t2_simMetricsHistory.forEach((m,i)=>rows.push(`sim,${i+1},${m.jitter.toFixed(3)},${m.smoothness.toFixed(3)},${m.hz.toFixed(1)},${m.dur.toFixed(0)},${m.count},${extra}`));
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'})); a.download='t2-simulator.csv'; a.click();
+}
+
+t2_setPreset('cheap');
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     TOOL 3 — ALGORITHM PLAYGROUND
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-t3">
+
+  <div style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; align-items:flex-start;">
+
+    <div class="panel" style="flex:1; min-width:180px;">
+      <div class="label" style="margin-bottom:8px; color:#7EC8E3;">moving average</div>
+      <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+        <span style="font-size:12px; color:var(--text2);">window size</span>
+        <span style="font-size:12px; font-weight:500;" id="t3-lbl-ma">5 pts</span>
+      </div>
+      <input type="range" min="3" max="21" step="2" value="5" id="t3-sl-ma" oninput="t3_onSlider()">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:2px;"><span>3</span><span>21</span></div>
+    </div>
+
+    <div class="panel" style="flex:1; min-width:180px;">
+      <div class="label" style="margin-bottom:8px; color:#B39DDB;">exponential</div>
+      <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+        <span style="font-size:12px; color:var(--text2);">alpha</span>
+        <span style="font-size:12px; font-weight:500;" id="t3-lbl-alpha">0.30</span>
+      </div>
+      <input type="range" min="0.1" max="0.9" step="0.05" value="0.3" id="t3-sl-alpha" oninput="t3_onSlider()">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:2px;"><span>0.1 (smooth)</span><span>0.9 (raw)</span></div>
+    </div>
+
+    <div class="panel" style="flex:1; min-width:220px;">
+      <div class="label" style="margin-bottom:8px; color:#EF9F27;">one euro filter</div>
+      <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+        <span style="font-size:12px; color:var(--text2);">beta</span>
+        <span style="font-size:12px; font-weight:500;" id="t3-lbl-beta">0.007</span>
+      </div>
+      <input type="range" min="0.0" max="0.1" step="0.001" value="0.007" id="t3-sl-beta" oninput="t3_onSlider()">
+      <div style="margin-bottom:8px;"></div>
+      <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+        <span style="font-size:12px; color:var(--text2);">min cutoff</span>
+        <span style="font-size:12px; font-weight:500;" id="t3-lbl-mc">1.0 Hz</span>
+      </div>
+      <input type="range" min="0.1" max="10" step="0.1" value="1.0" id="t3-sl-mc" oninput="t3_onSlider()">
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; justify-content:flex-end; padding-bottom:2px;">
+      <button class="btn" onclick="t3_clear()">clear all</button>
+      <button class="btn" onclick="t3_exportCSV()">export CSV</button>
+    </div>
   </div>
 
-  <h2>The Solution — Two Phases</h2>
-  <p>V1 solves the tip problem. An internal oscillator circuit boosts the signal at a fine metal tip so the screen registers it as a valid input — no wide rubber required. Pencil-form body, under $30, works on any standard capacitive tablet.</p>
-  <p>V2 removes the screen limitation entirely. A transparent overlay sits on top of any tablet screen and does its own stylus detection — pressure sensitivity, tilt, palm rejection — independent of whatever hardware is underneath. The tablet's native screen becomes irrelevant.</p>
-</section>
-
-
-<!-- ── 02 How It Works ── -->
-<section>
-  <div class="section-tag">02 — How It Works</div>
-
-  <h2>Technical Foundation</h2>
-
-  <h3>Capacitive Screens</h3>
-  <p>A capacitive touchscreen generates an electrostatic field across a grid of sensing electrodes in the display. When something disrupts that field — a finger, a conductive tip — the screen calculates the position of the disruption. The grid is spaced for finger-sized contact areas. A pencil point is geometrically too small to reach enough grid intersections to trigger a reliable detection.</p>
-
-  <h3>Passive vs Active Stylus</h3>
-  <p>A passive stylus just conducts electricity from your hand through a conductive tip. It works the same way a finger does. Wide tip required — no battery, no electronics, no fine point possible.</p>
-  <p>An active stylus has a battery and an internal circuit that generates its own signal. It doesn't rely on your body's electricity at all. The signal is strong enough that a fine metal tip can carry it to the screen surface without needing to cover a large area. The screen detects the signal, not the size of the contact.</p>
-
-  <h3>The Oscillator Circuit</h3>
-  <p>The core of V1 is a small oscillator circuit inside the stylus body. It generates a signal at the frequency the iPad screen uses for capacitive sensing — typically in the 200–300 kHz range. A brass or copper tip at the end carries that signal directly to the screen. The screen has no reason to reject it — it looks like a valid touch input.</p>
-
-  <table>
-    <tr>
-      <th>Type</th>
-      <th>Tip</th>
-      <th>Battery</th>
-      <th>Pressure</th>
-      <th>Compatibility</th>
-    </tr>
-    <tr>
-      <td>Passive (current budget market)</td>
-      <td>Wide rubber / disc</td>
-      <td>No</td>
-      <td>No</td>
-      <td>All capacitive screens</td>
-    </tr>
-    <tr>
-      <td>V1 — this product</td>
-      <td>Fine metal point</td>
-      <td>Small LiPo</td>
-      <td>No</td>
-      <td>All capacitive screens</td>
-    </tr>
-    <tr>
-      <td>Apple Pencil</td>
-      <td>Fine point</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>Recent iPads only</td>
-    </tr>
-    <tr>
-      <td>V2 — overlay system</td>
-      <td>Fine point</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>Any touchscreen device</td>
-    </tr>
-  </table>
-
-  <h3>Why No Pressure Sensitivity in V1</h3>
-  <p>Pressure sensitivity requires the screen's hardware to be specifically built to receive that kind of signal. On older devices the hardware isn't there and no circuit change in the stylus can add it. V1 focuses on the one thing every older device is missing — a usable fine tip. Pressure sensitivity ships with V2 via the overlay, which handles it independently.</p>
-</section>
-
-
-<!-- ── 03 Product ── -->
-<section>
-  <div class="section-tag">03 — Product</div>
-
-  <div class="version-header">
-    <h2>V1 — The Stylus</h2>
-    <span class="version-tag">Prototype Stage</span>
+  <div style="margin-bottom:10px;">
+    <div style="font-size:11px; color:var(--text2); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px;">
+      draw here — all sections update in real-time
+    </div>
+    <canvas id="t3-master" width="1200" height="160" style="width:100%; background:var(--bg2); border:0.5px solid var(--border2);"></canvas>
   </div>
 
-  <h3>Physical Specifications</h3>
-  <table>
-    <tr><th>Attribute</th><th>Spec</th></tr>
-    <tr><td>Length</td><td>155mm — standard pencil length</td></tr>
-    <tr><td>Diameter</td><td>8.5mm body, tapers to 5.5mm at tip grip zone</td></tr>
-    <tr><td>Weight</td><td>Lightweight — hollow 3D printed PLA body at ~20% infill</td></tr>
-    <tr><td>Grip</td><td>Smooth. Sized for standard tripod grip</td></tr>
-    <tr><td>Tip material</td><td>Brass or copper — conductive, machinable to a fine point</td></tr>
-    <tr><td>Body material</td><td>PLA via FDM 3D printing</td></tr>
-    <tr><td>Power</td><td>Small rechargeable LiPo cell</td></tr>
-    <tr><td>Charging</td><td>USB-C port at cap end</td></tr>
-    <tr><td>Controls</td><td>Single recessed power button</td></tr>
-  </table>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
 
-  <h3>Electronics</h3>
-  <ul>
-    <li>Oscillator circuit tuned to capacitive screen sensing frequency (200–300 kHz range)</li>
-    <li>Conductive metal tip carrying boosted signal to the screen surface</li>
-    <li>Small LiPo cell — estimated multi-hour use per charge</li>
-    <li>Charging and protection circuit integrated into body</li>
-  </ul>
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-size:11px; color:var(--text2); letter-spacing:0.06em; text-transform:uppercase;">section 1 — raw</span>
+        <div style="display:flex; gap:6px;">
+          <span class="panel" style="padding:3px 8px; font-size:11px;">jitter <span id="t3-s1-jitter" style="color:var(--text);">—</span> px</span>
+          <span class="panel" style="padding:3px 8px; font-size:11px;">lag <span id="t3-s1-lag" style="color:var(--text);">0</span> ms</span>
+        </div>
+      </div>
+      <canvas id="t3-c1" width="580" height="240" style="width:100%; background:var(--bg2);"></canvas>
+    </div>
 
-  <h3>Compatibility</h3>
-  <p>Any standard capacitive touchscreen. iPad (all generations), Android tablets, Windows touch devices, Chromebooks. No pairing, no app install, no device-specific configuration.</p>
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-size:11px; color:#7EC8E3; letter-spacing:0.06em; text-transform:uppercase;">section 2 — moving avg</span>
+        <div style="display:flex; gap:6px;">
+          <span class="panel" style="padding:3px 8px; font-size:11px;">jitter <span id="t3-s2-jitter" style="color:var(--text);">—</span> px</span>
+          <span class="panel" style="padding:3px 8px; font-size:11px;">lag <span id="t3-s2-lag" style="color:var(--text);">—</span> ms</span>
+        </div>
+      </div>
+      <canvas id="t3-c2" width="580" height="240" style="width:100%; background:var(--bg2);"></canvas>
+    </div>
 
-  <h3>What the 3D Model Covers</h3>
-  <p>The body STL is already completed. The design is hollow with a 4mm socket at the tip end for the conductive metal insert, toleranced for press-fit assembly. The body is intentionally printable on a standard FDM printer with no supports required.</p>
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-size:11px; color:#B39DDB; letter-spacing:0.06em; text-transform:uppercase;">section 3 — exponential</span>
+        <div style="display:flex; gap:6px;">
+          <span class="panel" style="padding:3px 8px; font-size:11px;">jitter <span id="t3-s3-jitter" style="color:var(--text);">—</span> px</span>
+          <span class="panel" style="padding:3px 8px; font-size:11px;">lag <span id="t3-s3-lag" style="color:var(--text);">—</span> ms</span>
+        </div>
+      </div>
+      <canvas id="t3-c3" width="580" height="240" style="width:100%; background:var(--bg2);"></canvas>
+    </div>
 
-  <hr>
+    <div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <span style="font-size:11px; color:#EF9F27; letter-spacing:0.06em; text-transform:uppercase;">section 4 — one euro</span>
+        <div style="display:flex; gap:6px;">
+          <span class="panel" style="padding:3px 8px; font-size:11px;">jitter <span id="t3-s4-jitter" style="color:var(--text);">—</span> px</span>
+          <span class="panel" style="padding:3px 8px; font-size:11px;">lag <span id="t3-s4-lag" style="color:var(--text);">—</span> ms</span>
+        </div>
+      </div>
+      <canvas id="t3-c4" width="580" height="240" style="width:100%; background:var(--bg2);"></canvas>
+    </div>
 
-  <div class="version-header">
-    <h2>V2 — The Overlay</h2>
-    <span class="version-tag">Concept Stage</span>
   </div>
 
-  <p>V2 is a different category of product entirely. Instead of a smarter stylus, it's a hardware layer — a thin transparent film that adheres to any tablet screen and handles all stylus detection itself. The tablet's native screen hardware becomes irrelevant because the overlay's own sensing grid is doing the work.</p>
-
-  <div class="callout">
-    <strong>The Core Idea</strong>
-    The overlay has an embedded sensing grid across its full surface area. The stylus communicates with the overlay, not the screen underneath. The overlay then translates that input into standard touch events the tablet already understands. No screen modification. No firmware changes. No device restrictions.
+  <div class="panel" style="background:var(--bg3);">
+    <div class="label" style="margin-bottom:8px;">stroke comparison history</div>
+    <div id="t3-history" style="font-size:12px; color:var(--text2);">no strokes recorded</div>
   </div>
 
-  <h3>Physical Design</h3>
-  <ul>
-    <li>Thin transparent film — applies like a screen protector</li>
-    <li>Embedded conductive sensing grid (ITO or similar transparent conductor)</li>
-    <li>Optically clear — no visible impact on display quality</li>
-    <li>Small edge-mounted controller module handling signal processing</li>
-    <li>Passive on the screen side — active on the stylus detection side</li>
-  </ul>
-
-  <h3>Communication Back to Device</h3>
-  <table>
-    <tr><th>Method</th><th>Use Case</th><th>Tradeoff</th></tr>
-    <tr>
-      <td>Bluetooth HID</td>
-      <td>Wireless, no cables, any device</td>
-      <td>Minimal latency, requires one-time pairing</td>
-    </tr>
-    <tr>
-      <td>USB-C</td>
-      <td>Wired, zero latency, maximum reliability</td>
-      <td>Requires available port</td>
-    </tr>
-  </table>
-
-  <h3>What the Overlay Enables</h3>
-  <ul>
-    <li>Full pressure sensitivity — processed at the overlay level, not the screen</li>
-    <li>Tilt detection — handled by the controller module</li>
-    <li>Palm rejection — overlay distinguishes stylus signal from passive hand contact</li>
-    <li>Universal device support — any touchscreen, any age, any manufacturer</li>
-    <li>No app required — input arrives at the device as standard HID touch events</li>
-  </ul>
-</section>
-
-
-<!-- ── 04 Market ── -->
-<section>
-  <div class="section-tag">04 — Market</div>
-
-  <h2>Who This Is For</h2>
-  <p>Anyone who draws, annotates, or writes on a tablet and has been failed by the existing market. The frustration is universal — students, artists, professionals, casual users. The common thread is owning a tablet and finding that every affordable stylus is a poor tool and every good stylus is either too expensive or locked to a device they don't have.</p>
-
-  <h3>Target Segments</h3>
-  <table>
-    <tr><th>Segment</th><th>Problem</th></tr>
-    <tr>
-      <td>Students with older tablets</td>
-      <td>Need to annotate and sketch. Cannot justify $100+ accessory cost on a device they already own.</td>
-    </tr>
-    <tr>
-      <td>Casual artists</td>
-      <td>Draw on whatever tablet they have. Fine tip is non-negotiable for detail work. Budget options don't deliver it.</td>
-    </tr>
-    <tr>
-      <td>Note takers</td>
-      <td>Wide rubber tips make handwriting messy and imprecise. Want a tool that writes like a pen.</td>
-    </tr>
-    <tr>
-      <td>General tablet owners</td>
-      <td>Bought a cheap stylus, hated it, want something that actually works without upgrading their device.</td>
-    </tr>
-    <tr>
-      <td>V2 — creative professionals</td>
-      <td>Want full pressure sensitivity on non-Apple or older hardware. Currently have no good option.</td>
-    </tr>
-  </table>
-
-  <h3>Competitive Landscape</h3>
-  <table>
-    <tr><th>Product</th><th>Works On</th><th>Fine Tip</th><th>Pressure</th><th>Price</th></tr>
-    <tr>
-      <td>Budget rubber tip stylus</td>
-      <td>All capacitive</td>
-      <td>No</td>
-      <td>No</td>
-      <td>$5–$20</td>
-    </tr>
-    <tr>
-      <td>V1 — this product</td>
-      <td>All capacitive</td>
-      <td>Yes</td>
-      <td>No</td>
-      <td>Under $30</td>
-    </tr>
-    <tr>
-      <td>Apple Pencil</td>
-      <td>Recent iPads only</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>$99–$129</td>
-    </tr>
-    <tr>
-      <td>Samsung S Pen</td>
-      <td>Samsung devices only</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>Bundled or $50+</td>
-    </tr>
-    <tr>
-      <td>Wacom Intuos</td>
-      <td>Non-touch screens only</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>$80–$200</td>
-    </tr>
-    <tr>
-      <td>V2 — overlay + stylus</td>
-      <td>Any touchscreen device</td>
-      <td>Yes</td>
-      <td>Yes</td>
-      <td>TBD</td>
-    </tr>
-  </table>
-
-  <div class="callout">
-    <strong>The Gap</strong>
-    V1 occupies a space that doesn't exist in the current market — fine tip, active, under $30, works on everything. V2 goes further: the only product that adds full precision stylus capability to any existing touchscreen device regardless of what hardware is inside it. No current competitor touches either position.
+  <div style="margin-top:10px; font-size:11px; color:var(--text2);">
+    all sections show the same raw stroke processed by different algorithms — parameter changes reprocess all prior strokes immediately
   </div>
-</section>
+</div>
+
+<script>
+function t3_computeJitter(pts) {
+  if (pts.length < 3) return 0;
+  const devs = [];
+  for (let i = 1; i < pts.length - 1; i++) {
+    const a = pts[i-1], b = pts[i+1], p = pts[i];
+    const dx = b.x-a.x, dy = b.y-a.y, len = Math.hypot(dx, dy);
+    if (len < 0.001) continue;
+    devs.push(Math.abs(dy*p.x - dx*p.y + b.x*a.y - b.y*a.x) / len);
+  }
+  if (!devs.length) return 0;
+  const mean = devs.reduce((s,v) => s+v, 0) / devs.length;
+  return Math.sqrt(devs.reduce((s,v) => s+(v-mean)**2, 0) / devs.length);
+}
+
+function t3_computeSmoothness(pts) {
+  if (pts.length < 3) return 1;
+  const angles = [];
+  for (let i = 1; i < pts.length - 1; i++) {
+    const v1 = {x: pts[i].x-pts[i-1].x, y: pts[i].y-pts[i-1].y};
+    const v2 = {x: pts[i+1].x-pts[i].x, y: pts[i+1].y-pts[i].y};
+    const dot = v1.x*v2.x + v1.y*v2.y;
+    const mag = Math.hypot(v1.x,v1.y) * Math.hypot(v2.x,v2.y);
+    if (mag < 0.001) continue;
+    angles.push(Math.acos(Math.max(-1, Math.min(1, dot/mag))));
+  }
+  if (!angles.length) return 1;
+  return Math.max(0, 1 - angles.reduce((s,v) => s+v, 0) / angles.length / Math.PI);
+}
+
+function t3_computeMetrics(pts) {
+  const dur = pts.length > 1 ? pts[pts.length-1].t - pts[0].t : 0;
+  return {
+    jitter:     t3_computeJitter(pts),
+    smoothness: t3_computeSmoothness(pts),
+    hz:         dur > 0 ? (pts.length / dur) * 1000 : 0,
+    dur, count: pts.length
+  };
+}
+
+function t3_makeOEF(minCutoff, beta, dCutoff) {
+  dCutoff = dCutoff || 1.0;
+  let xPrev = null, dxPrev = 0, tPrev = null;
+  function alpha(cutoff, dt) {
+    const tau = 1.0 / (2 * Math.PI * cutoff);
+    return 1.0 / (1.0 + tau / dt);
+  }
+  return {
+    reset() { xPrev = null; dxPrev = 0; tPrev = null; },
+    filter(x, t_ms) {
+      const t = t_ms / 1000;
+      if (xPrev === null) { xPrev = x; tPrev = t; return x; }
+      const dt = Math.max(t - tPrev, 1e-6);
+      tPrev = t;
+      const dx = (x - xPrev) / dt;
+      const a_d = alpha(dCutoff, dt);
+      const dxHat = a_d * dx + (1 - a_d) * dxPrev;
+      dxPrev = dxHat;
+      const cutoff = minCutoff + beta * Math.abs(dxHat);
+      const a = alpha(cutoff, dt);
+      const xHat = a * x + (1 - a) * xPrev;
+      xPrev = xHat;
+      return xHat;
+    }
+  };
+}
+
+const T3_COLORS = { s1: '#e8e8e8', s2: '#7EC8E3', s3: '#B39DDB', s4: '#EF9F27' };
+
+let t3_params = { maWindow: 5, alpha: 0.3, beta: 0.007, minCutoff: 1.0 };
+let t3_rawBuf = [];
+let t3_drawing = false;
+let t3_out = { s1: [], s2: [], s3: [], s4: [] };
+let t3_strokeHistory = [];
+
+const t3_master    = document.getElementById('t3-master');
+const t3_masterCtx = t3_master.getContext('2d');
+const t3_canvases  = [
+  { id:'s1', el:document.getElementById('t3-c1'), ctx:document.getElementById('t3-c1').getContext('2d') },
+  { id:'s2', el:document.getElementById('t3-c2'), ctx:document.getElementById('t3-c2').getContext('2d') },
+  { id:'s3', el:document.getElementById('t3-c3'), ctx:document.getElementById('t3-c3').getContext('2d') },
+  { id:'s4', el:document.getElementById('t3-c4'), ctx:document.getElementById('t3-c4').getContext('2d') },
+];
+
+function t3_getXY(e, canvas) {
+  const rect = canvas.getBoundingClientRect();
+  const sx = canvas.width / rect.width, sy = canvas.height / rect.height;
+  const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+  return evs.map(ev => ({
+    x: (ev.clientX - rect.left) * sx,
+    y: (ev.clientY - rect.top)  * sy,
+    t: ev.timeStamp
+  }));
+}
+
+function t3_applyRaw(pts)          { return pts.map(p => ({...p})); }
+
+function t3_applyMA(pts, w) {
+  return pts.map((p, i) => {
+    const lo    = Math.max(0, i - (w - 1));
+    const slice = pts.slice(lo, i + 1);
+    return {
+      x: slice.reduce((s,q) => s+q.x, 0) / slice.length,
+      y: slice.reduce((s,q) => s+q.y, 0) / slice.length,
+      t: p.t
+    };
+  });
+}
+
+function t3_applyEMA(pts, alpha) {
+  if (!pts.length) return [];
+  const out = [{...pts[0]}];
+  for (let i = 1; i < pts.length; i++) {
+    out.push({
+      x: alpha * pts[i].x + (1 - alpha) * out[i-1].x,
+      y: alpha * pts[i].y + (1 - alpha) * out[i-1].y,
+      t: pts[i].t
+    });
+  }
+  return out;
+}
+
+function t3_applyOEF(pts, beta, minCutoff) {
+  if (!pts.length) return [];
+  const fx = t3_makeOEF(minCutoff, beta);
+  const fy = t3_makeOEF(minCutoff, beta);
+  return pts.map(p => ({ x: fx.filter(p.x, p.t), y: fy.filter(p.y, p.t), t: p.t }));
+}
+
+function t3_avgDt(pts) {
+  if (pts.length < 2) return 16;
+  return (pts[pts.length-1].t - pts[0].t) / (pts.length - 1);
+}
+
+function t3_estLagMA(pts, w)      { return ((w - 1) / 2) * t3_avgDt(pts); }
+function t3_estLagEMA(pts, alpha) { return ((1 / alpha) - 1) * t3_avgDt(pts); }
+function t3_estLagOEF(raw, filt) {
+  const n = Math.min(raw.length, filt.length);
+  if (n < 2) return 0;
+  let sumD = 0;
+  for (let i = 0; i < n; i++) sumD += Math.hypot(raw[i].x - filt[i].x, raw[i].y - filt[i].y);
+  let totalDist = 0;
+  for (let i = 1; i < raw.length; i++) totalDist += Math.hypot(raw[i].x - raw[i-1].x, raw[i].y - raw[i-1].y);
+  const dur   = raw[raw.length-1].t - raw[0].t;
+  const speed = dur > 0 && totalDist > 0 ? totalDist / dur : 1;
+  return (sumD / n) / speed;
+}
+
+function t3_rebuild() {
+  t3_out.s1 = t3_applyRaw(t3_rawBuf);
+  t3_out.s2 = t3_applyMA (t3_rawBuf, t3_params.maWindow);
+  t3_out.s3 = t3_applyEMA(t3_rawBuf, t3_params.alpha);
+  t3_out.s4 = t3_applyOEF(t3_rawBuf, t3_params.beta, t3_params.minCutoff);
+}
+
+function t3_drawStroke(ctx, pts, color, srcCanvas, dstCanvas) {
+  if (pts.length < 2) return;
+  const sx = dstCanvas.width  / srcCanvas.width;
+  const sy = dstCanvas.height / srcCanvas.height;
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x * sx, pts[0].y * sy);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x * sx, pts[i].y * sy);
+  ctx.strokeStyle = color;
+  ctx.lineWidth   = 1.5;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+  ctx.stroke();
+}
+
+function t3_renderAll() {
+  t3_canvases.forEach(c => c.ctx.clearRect(0, 0, c.el.width, c.el.height));
+  for (const e of t3_strokeHistory) {
+    t3_drawStroke(t3_canvases[0].ctx, e.raw, T3_COLORS.s1, t3_master, t3_canvases[0].el);
+    t3_drawStroke(t3_canvases[1].ctx, e.s2,  T3_COLORS.s2, t3_master, t3_canvases[1].el);
+    t3_drawStroke(t3_canvases[2].ctx, e.s3,  T3_COLORS.s3, t3_master, t3_canvases[2].el);
+    t3_drawStroke(t3_canvases[3].ctx, e.s4,  T3_COLORS.s4, t3_master, t3_canvases[3].el);
+  }
+  if (t3_rawBuf.length > 1) {
+    t3_drawStroke(t3_canvases[0].ctx, t3_out.s1, T3_COLORS.s1, t3_master, t3_canvases[0].el);
+    t3_drawStroke(t3_canvases[1].ctx, t3_out.s2, T3_COLORS.s2, t3_master, t3_canvases[1].el);
+    t3_drawStroke(t3_canvases[2].ctx, t3_out.s3, T3_COLORS.s3, t3_master, t3_canvases[2].el);
+    t3_drawStroke(t3_canvases[3].ctx, t3_out.s4, T3_COLORS.s4, t3_master, t3_canvases[3].el);
+  }
+}
+
+function t3_drawMasterStroke(pts, alpha) {
+  if (pts.length < 2) return;
+  t3_masterCtx.beginPath();
+  t3_masterCtx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < pts.length; i++) t3_masterCtx.lineTo(pts[i].x, pts[i].y);
+  t3_masterCtx.strokeStyle = `rgba(232,232,232,${alpha || 0.35})`;
+  t3_masterCtx.lineWidth   = 1.5;
+  t3_masterCtx.lineCap     = 'round';
+  t3_masterCtx.stroke();
+}
+
+function t3_updateMetrics() {
+  const src = t3_rawBuf.length > 2 ? t3_rawBuf : null;
+  const sections = [
+    { id:'s1', pts:t3_out.s1, lag:0 },
+    { id:'s2', pts:t3_out.s2, lag: src ? t3_estLagMA(src,  t3_params.maWindow) : null },
+    { id:'s3', pts:t3_out.s3, lag: src ? t3_estLagEMA(src, t3_params.alpha)    : null },
+    { id:'s4', pts:t3_out.s4, lag: src ? t3_estLagOEF(t3_out.s1, t3_out.s4)  : null },
+  ];
+  for (const s of sections) {
+    const j = s.pts.length > 2 ? t3_computeJitter(s.pts).toFixed(2) : '—';
+    const l = s.lag === null ? '—' : Math.round(s.lag);
+    document.getElementById('t3-'+s.id+'-jitter').textContent = j;
+    document.getElementById('t3-'+s.id+'-lag').textContent    = l;
+  }
+}
+
+t3_master.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  t3_master.setPointerCapture(e.pointerId);
+  t3_drawing = true;
+  t3_rawBuf  = [];
+  t3_masterCtx.clearRect(0, 0, t3_master.width, t3_master.height);
+  for (const entry of t3_strokeHistory) t3_drawMasterStroke(entry.raw);
+  t3_rawBuf.push(...t3_getXY(e, t3_master));
+});
+
+t3_master.addEventListener('pointermove', e => {
+  if (!t3_drawing) return;
+  e.preventDefault();
+  const pts = t3_getXY(e, t3_master);
+  const prev = t3_rawBuf[t3_rawBuf.length - 1];
+  if (prev) {
+    t3_masterCtx.beginPath();
+    t3_masterCtx.moveTo(prev.x, prev.y);
+    for (const p of pts) t3_masterCtx.lineTo(p.x, p.y);
+    t3_masterCtx.strokeStyle = 'rgba(232,232,232,0.75)';
+    t3_masterCtx.lineWidth   = 1.5;
+    t3_masterCtx.lineCap     = 'round';
+    t3_masterCtx.stroke();
+  }
+  t3_rawBuf.push(...pts);
+  t3_rebuild();
+  t3_renderAll();
+  t3_updateMetrics();
+});
+
+t3_master.addEventListener('pointerup', e => {
+  if (!t3_drawing) return;
+  t3_drawing = false;
+  if (t3_rawBuf.length < 4) return;
+  t3_rebuild();
+  t3_strokeHistory.push({
+    raw:  [...t3_out.s1],
+    s2:   [...t3_out.s2],
+    s3:   [...t3_out.s3],
+    s4:   [...t3_out.s4],
+    m1:   t3_computeMetrics(t3_out.s1),
+    m2:   t3_computeMetrics(t3_out.s2),
+    m3:   t3_computeMetrics(t3_out.s3),
+    m4:   t3_computeMetrics(t3_out.s4),
+    lag2: t3_estLagMA(t3_rawBuf,  t3_params.maWindow),
+    lag3: t3_estLagEMA(t3_rawBuf, t3_params.alpha),
+    lag4: t3_estLagOEF(t3_out.s1, t3_out.s4),
+    params: { ...t3_params },
+  });
+  t3_rawBuf = [];
+  t3_renderAll();
+  t3_updateHistory();
+  t3_updateMetrics();
+});
+
+function t3_onSlider() {
+  t3_params.maWindow  = parseInt  (document.getElementById('t3-sl-ma').value);
+  t3_params.alpha     = parseFloat(document.getElementById('t3-sl-alpha').value);
+  t3_params.beta      = parseFloat(document.getElementById('t3-sl-beta').value);
+  t3_params.minCutoff = parseFloat(document.getElementById('t3-sl-mc').value);
+  document.getElementById('t3-lbl-ma').textContent    = t3_params.maWindow + ' pts';
+  document.getElementById('t3-lbl-alpha').textContent = t3_params.alpha.toFixed(2);
+  document.getElementById('t3-lbl-beta').textContent  = t3_params.beta.toFixed(3);
+  document.getElementById('t3-lbl-mc').textContent    = t3_params.minCutoff.toFixed(1) + ' Hz';
+  for (const entry of t3_strokeHistory) {
+    entry.s2   = t3_applyMA (entry.raw, t3_params.maWindow);
+    entry.s3   = t3_applyEMA(entry.raw, t3_params.alpha);
+    entry.s4   = t3_applyOEF(entry.raw, t3_params.beta, t3_params.minCutoff);
+    entry.m2   = t3_computeMetrics(entry.s2);
+    entry.m3   = t3_computeMetrics(entry.s3);
+    entry.m4   = t3_computeMetrics(entry.s4);
+    entry.lag2 = t3_estLagMA (entry.raw, t3_params.maWindow);
+    entry.lag3 = t3_estLagEMA(entry.raw, t3_params.alpha);
+    entry.lag4 = t3_estLagOEF(entry.raw, entry.s4);
+    entry.params = { ...t3_params };
+  }
+  if (t3_rawBuf.length > 1) t3_rebuild();
+  t3_renderAll();
+  t3_updateMetrics();
+  t3_updateHistory();
+}
+
+function t3_updateHistory() {
+  const el = document.getElementById('t3-history');
+  if (!t3_strokeHistory.length) { el.textContent = 'no strokes recorded'; return; }
+  const cols  = ['#', 'raw jitter', 'ma jitter', 'ma lag', 'ema jitter', 'ema lag', 'oef jitter', 'oef lag'];
+  const style = `display:grid; grid-template-columns: 24px repeat(${cols.length-1}, minmax(0,1fr)); gap:4px 10px;`;
+  let html    = `<div style="${style} margin-bottom:4px;">` +
+    cols.map(c => `<span style="color:var(--text2);font-size:11px;">${c}</span>`).join('') +
+    '</div>';
+  for (let i = t3_strokeHistory.length - 1; i >= 0; i--) {
+    const e = t3_strokeHistory[i], n = i + 1;
+    html += `<div style="${style} padding:3px 0; border-top:0.5px solid var(--border);">
+      <span>${n}</span>
+      <span>${e.m1.jitter.toFixed(2)}</span>
+      <span style="color:#7EC8E3">${e.m2.jitter.toFixed(2)}</span>
+      <span style="color:#7EC8E3">${Math.round(e.lag2)}</span>
+      <span style="color:#B39DDB">${e.m3.jitter.toFixed(2)}</span>
+      <span style="color:#B39DDB">${Math.round(e.lag3)}</span>
+      <span style="color:#EF9F27">${e.m4.jitter.toFixed(2)}</span>
+      <span style="color:#EF9F27">${Math.round(e.lag4)}</span>
+    </div>`;
+  }
+  el.innerHTML = html;
+}
+
+function t3_clear() {
+  t3_rawBuf = []; t3_strokeHistory = [];
+  t3_out    = { s1:[], s2:[], s3:[], s4:[] };
+  t3_masterCtx.clearRect(0, 0, t3_master.width, t3_master.height);
+  t3_canvases.forEach(c => c.ctx.clearRect(0, 0, c.el.width, c.el.height));
+  t3_updateHistory();
+  ['s1','s2','s3','s4'].forEach(s => {
+    document.getElementById('t3-'+s+'-jitter').textContent = '—';
+    document.getElementById('t3-'+s+'-lag').textContent    = s === 's1' ? '0' : '—';
+  });
+}
+
+function t3_exportCSV() {
+  const rows = ['stroke,algorithm,jitter_px,smoothness,hz,duration_ms,point_count,lag_ms,ma_window,ema_alpha,oef_beta,oef_min_cutoff'];
+  t3_strokeHistory.forEach((e, i) => {
+    const n = i + 1, p = e.params;
+    const tail = `${p.maWindow},${p.alpha},${p.beta},${p.minCutoff}`;
+    const row  = (alg, m, lag) =>
+      `${n},${alg},${m.jitter.toFixed(3)},${m.smoothness.toFixed(3)},${m.hz.toFixed(1)},${m.dur.toFixed(0)},${m.count},${Math.round(lag)},${tail}`;
+    rows.push(row('raw',          e.m1, 0));
+    rows.push(row('moving_avg',   e.m2, e.lag2));
+    rows.push(row('exponential',  e.m3, e.lag3));
+    rows.push(row('one_euro',     e.m4, e.lag4));
+  });
+  const a = document.createElement('a');
+  a.href     = URL.createObjectURL(new Blob([rows.join('\n')], { type:'text/csv' }));
+  a.download = 't3-algorithm-comparison.csv';
+  a.click();
+}
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     TOOL 4 — LATENCY BLIND TEST
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="page" id="page-t4">
+  <div style="display:flex; align-items:flex-start; gap:16px; margin-bottom:14px; flex-wrap:wrap;">
+
+    <!-- Left: canvas + response UI -->
+    <div style="flex:1; min-width:340px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="font-size:13px; font-weight:500; letter-spacing:0.04em;" id="t4-trial-counter">Trial 0 / 20</span>
+          <span style="font-size:11px; color:var(--text3);" id="t4-status-msg">draw a stroke to begin</span>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn" onclick="t4_reset()">reset test</button>
+          <button class="btn" onclick="t4_exportCSV()">export CSV</button>
+        </div>
+      </div>
+
+      <!-- Drawing canvas -->
+      <canvas id="t4-canvas" width="1100" height="380"
+        style="width:100%; background:var(--bg2); border:0.5px solid var(--border2); display:block; margin-bottom:10px;">
+      </canvas>
+
+      <!-- Response buttons — hidden until stroke ends -->
+      <div id="t4-response-area" style="display:none; gap:10px; justify-content:center; align-items:center; padding:10px 0;">
+        <span style="font-size:12px; color:var(--text2); margin-right:4px;">did that feel laggy?</span>
+        <button class="btn" id="t4-btn-lag" onclick="t4_respond(true)"
+          style="font-size:13px; padding:10px 28px; border-color:var(--red); color:var(--red);">
+          felt lag
+        </button>
+        <button class="btn" id="t4-btn-nolag" onclick="t4_respond(false)"
+          style="font-size:13px; padding:10px 28px; border-color:var(--green); color:var(--green);">
+          no lag
+        </button>
+      </div>
+
+      <!-- Progress bar -->
+      <div style="display:flex; align-items:center; gap:10px; margin-top:6px;">
+        <div class="bar-track" style="height:3px;">
+          <div class="bar-fill" id="t4-progress-bar" style="width:0%; background:var(--accent-a); transition:width 0.3s;"></div>
+        </div>
+        <span style="font-size:11px; color:var(--text3); white-space:nowrap;" id="t4-progress-label">0 / 20</span>
+      </div>
+    </div>
+
+    <!-- Right: live results panel -->
+    <div style="flex:0 0 300px;">
+      <div class="panel" style="background:var(--bg3);">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+          <span class="label" style="margin-bottom:0;">perception by latency</span>
+          <span style="font-size:10px; color:var(--text3);" id="t4-results-note">—</span>
+        </div>
+        <div id="t4-results-body" style="font-size:12px; color:var(--text2);">
+          no trials yet
+        </div>
+      </div>
+
+      <div class="panel" style="margin-top:10px; background:var(--bg3);">
+        <div class="label" style="margin-bottom:8px;">last 5 trials</div>
+        <div id="t4-recent-trials" style="font-size:12px; color:var(--text2);">—</div>
+      </div>
+
+      <div class="panel" style="margin-top:10px;">
+        <div class="label" style="margin-bottom:4px;">JND estimate</div>
+        <div class="val" id="t4-jnd-val" style="font-size:16px;">—<span class="val-unit">ms</span></div>
+        <div style="font-size:11px; color:var(--text3); margin-top:4px;">latency where ~50% notice lag</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="font-size:11px; color:var(--text3); margin-top:4px;">
+    latency is hidden — real rendering delay via rAF queue, identical pipeline to tool 2 &nbsp;·&nbsp; 20 trials minimum, randomized from [0,5,10,15,20,25,30,40,50] ms pool
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// TOOL 4 — LATENCY BLIND TEST
+// Same queue + rAF approach as Tool 2. Real rendering delay.
+// ═══════════════════════════════════════════════════════════════
+
+// ── Config ─────────────────────────────────────────────────────
+const T4_MIN_TRIALS  = 20;
+// Latency pool: each value appears at least twice to ensure statistical coverage
+const T4_LAT_POOL    = [0, 5, 10, 15, 20, 25, 30, 40, 50];
+const T4_STROKE_COLOR = '#378ADD';
+
+// ── State ───────────────────────────────────────────────────────
+let t4_trials        = [];       // {latency, response:'lag'|'nolag'}
+let t4_pendingLat    = null;     // latency for current stroke (hidden from user)
+let t4_drawing       = false;
+let t4_awaitingResp  = false;    // stroke ended, waiting for button click
+let t4_done          = false;    // test complete (>=20 trials)
+
+// rAF queue (same pattern as Tool 2)
+let t4_simQueue      = [];       // {x,y,releaseAt}
+let t4_simRendered   = [];       // points rendered this stroke
+let t4_pointerPath   = [];       // raw pointer events this stroke
+let t4_rafId         = null;
+
+const t4_canvas  = document.getElementById('t4-canvas');
+const t4_ctx     = t4_canvas.getContext('2d');
+
+// ── Latency pool generation ─────────────────────────────────────
+// Produces a shuffled queue ensuring each value appears ≥2 times in
+// every 20-trial block, giving roughly uniform coverage.
+let t4_latQueue = [];
+
+function t4_buildLatQueue() {
+  // Two full copies of pool = 18 values, then 2 random extras to reach 20
+  const base = [...T4_LAT_POOL, ...T4_LAT_POOL];
+  // pad to 20
+  while (base.length < T4_MIN_TRIALS) {
+    base.push(T4_LAT_POOL[Math.floor(Math.random() * T4_LAT_POOL.length)]);
+  }
+  // Fisher-Yates shuffle
+  for (let i = base.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [base[i], base[j]] = [base[j], base[i]];
+  }
+  return base;
+}
+
+// ── Coordinate helper (consistent with Tools 1-3) ──────────────
+function t4_getXY(e) {
+  const rect = t4_canvas.getBoundingClientRect();
+  const sx = t4_canvas.width  / rect.width;
+  const sy = t4_canvas.height / rect.height;
+  const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+  return evs.map(ev => ({
+    x: (ev.clientX - rect.left) * sx,
+    y: (ev.clientY - rect.top)  * sy,
+    t: ev.timeStamp
+  }));
+}
+
+// ── rAF loop: drain sim queue, render when time is right ────────
+function t4_rafLoop(now) {
+  while (t4_simQueue.length && t4_simQueue[0].releaseAt <= now) {
+    const pt = t4_simQueue.shift();
+    if (t4_simRendered.length > 0) {
+      const prev = t4_simRendered[t4_simRendered.length - 1];
+      t4_ctx.beginPath();
+      t4_ctx.moveTo(prev.x, prev.y);
+      t4_ctx.lineTo(pt.x, pt.y);
+      t4_ctx.strokeStyle = T4_STROKE_COLOR;
+      t4_ctx.lineWidth   = 2;
+      t4_ctx.lineCap     = 'round';
+      t4_ctx.stroke();
+    }
+    t4_simRendered.push(pt);
+  }
+
+  if (t4_drawing || t4_simQueue.length > 0) {
+    t4_rafId = requestAnimationFrame(t4_rafLoop);
+  } else {
+    t4_rafId = null;
+    // Queue fully drained after stroke end → show response buttons
+    if (t4_awaitingResp) t4_showResponseButtons();
+  }
+}
+
+function t4_startRaf() {
+  if (!t4_rafId) t4_rafId = requestAnimationFrame(t4_rafLoop);
+}
+
+// ── Pointer events ──────────────────────────────────────────────
+t4_canvas.addEventListener('pointerdown', e => {
+  if (t4_awaitingResp || t4_done) return;
+  e.preventDefault();
+  t4_canvas.setPointerCapture(e.pointerId);
+
+  // Assign hidden latency for this stroke
+  if (t4_latQueue.length === 0) t4_latQueue = t4_buildLatQueue();
+  t4_pendingLat  = t4_latQueue.shift();
+
+  t4_drawing     = true;
+  t4_simQueue    = [];
+  t4_simRendered = [];
+  t4_pointerPath = [];
+
+  // Clear canvas for this stroke (fresh per trial)
+  t4_ctx.clearRect(0, 0, t4_canvas.width, t4_canvas.height);
+
+  const pts = t4_getXY(e);
+  t4_pointerPath.push(...pts);
+  // Queue the first point
+  for (const p of pts) {
+    t4_simQueue.push({ x: p.x, y: p.y, releaseAt: p.t + t4_pendingLat });
+  }
+  t4_startRaf();
+  t4_setStatus('drawing…');
+});
+
+t4_canvas.addEventListener('pointermove', e => {
+  if (!t4_drawing) return;
+  e.preventDefault();
+  const pts = t4_getXY(e);
+  t4_pointerPath.push(...pts);
+  for (const p of pts) {
+    t4_simQueue.push({ x: p.x, y: p.y, releaseAt: p.t + t4_pendingLat });
+  }
+});
+
+t4_canvas.addEventListener('pointerup', e => {
+  if (!t4_drawing) return;
+  t4_drawing     = false;
+  t4_awaitingResp = true;
+  // rAF loop will finish draining then call t4_showResponseButtons
+  t4_startRaf();
+});
+
+// ── Response handling ───────────────────────────────────────────
+function t4_showResponseButtons() {
+  document.getElementById('t4-response-area').style.display = 'flex';
+  t4_setStatus('felt lag?');
+}
+
+function t4_respond(feltLag) {
+  document.getElementById('t4-response-area').style.display = 'none';
+  t4_awaitingResp = false;
+
+  t4_trials.push({ latency: t4_pendingLat, response: feltLag ? 'lag' : 'nolag' });
+  t4_pendingLat = null;
+
+  t4_updateUI();
+
+  if (t4_trials.length >= T4_MIN_TRIALS) {
+    t4_done = true;
+    t4_setStatus('test complete — ' + t4_trials.length + ' trials');
+    t4_canvas.style.opacity = '0.5';
+    t4_canvas.style.cursor  = 'default';
+  } else {
+    t4_setStatus('draw next stroke');
+  }
+}
+
+// ── UI updates ──────────────────────────────────────────────────
+function t4_setStatus(msg) {
+  document.getElementById('t4-status-msg').textContent = msg;
+}
+
+function t4_updateUI() {
+  const n = t4_trials.length;
+  document.getElementById('t4-trial-counter').textContent = `Trial ${n} / ${T4_MIN_TRIALS}`;
+  document.getElementById('t4-progress-bar').style.width  = Math.min(n / T4_MIN_TRIALS * 100, 100) + '%';
+  document.getElementById('t4-progress-label').textContent = `${n} / ${T4_MIN_TRIALS}`;
+
+  t4_renderResults();
+  t4_renderRecentTrials();
+  t4_renderJND();
+}
+
+function t4_renderResults() {
+  const el = document.getElementById('t4-results-body');
+  if (!t4_trials.length) { el.textContent = 'no trials yet'; return; }
+
+  // Aggregate by latency bucket
+  const buckets = {};
+  for (const lat of T4_LAT_POOL) buckets[lat] = { lag: 0, total: 0 };
+  for (const tr of t4_trials) {
+    if (buckets[tr.latency] === undefined) buckets[tr.latency] = { lag: 0, total: 0 };
+    buckets[tr.latency].total++;
+    if (tr.response === 'lag') buckets[tr.latency].lag++;
+  }
+
+  let html = '<div style="display:grid; grid-template-columns:50px 1fr 70px; gap:4px 8px; align-items:center;">';
+  for (const lat of T4_LAT_POOL) {
+    const b = buckets[lat];
+    if (b.total === 0) {
+      html += `<span style="color:var(--text3);">${lat}ms</span>
+               <div class="bar-track" style="height:6px;"><div class="bar-fill" style="width:0%;background:var(--accent-a);"></div></div>
+               <span style="color:var(--text3); font-size:11px;">—</span>`;
+    } else {
+      const pct   = Math.round(b.lag / b.total * 100);
+      const color = pct >= 70 ? 'var(--red)' : pct >= 30 ? 'var(--orange)' : 'var(--green)';
+      html += `<span style="color:var(--text2);">${lat}ms</span>
+               <div class="bar-track" style="height:6px;"><div class="bar-fill" style="width:${pct}%; background:${color};"></div></div>
+               <span style="color:${color}; font-size:11px;">${pct}% <span style="color:var(--text3);">(${b.lag}/${b.total})</span></span>`;
+    }
+  }
+  html += '</div>';
+  el.innerHTML = html;
+
+  const note = t4_trials.length >= T4_MIN_TRIALS ? 'complete' : `${t4_trials.length} trials`;
+  document.getElementById('t4-results-note').textContent = note;
+}
+
+function t4_renderRecentTrials() {
+  const el = document.getElementById('t4-recent-trials');
+  if (!t4_trials.length) { el.textContent = '—'; return; }
+  const recent = t4_trials.slice(-5).reverse();
+  let html = '<div style="display:flex; flex-direction:column; gap:4px;">';
+  for (let i = 0; i < recent.length; i++) {
+    const tr    = recent[i];
+    const color = tr.response === 'lag' ? 'var(--red)' : 'var(--green)';
+    const label = tr.response === 'lag' ? 'felt lag' : 'no lag';
+    const num   = t4_trials.length - i;
+    html += `<div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="color:var(--text3); font-size:11px;">#${num}</span>
+      <span style="color:var(--text2);">${tr.latency}ms</span>
+      <span style="color:${color}; font-size:11px;">${label}</span>
+    </div>`;
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function t4_renderJND() {
+  // Estimate JND: interpolate where lag rate crosses 50%
+  // Need at least 2 buckets with data to interpolate
+  const el = document.getElementById('t4-jnd-val');
+  const buckets = {};
+  for (const tr of t4_trials) {
+    if (!buckets[tr.latency]) buckets[tr.latency] = { lag: 0, total: 0 };
+    buckets[tr.latency].total++;
+    if (tr.response === 'lag') buckets[tr.latency].lag++;
+  }
+
+  // Sorted entries with enough data (≥2 trials per bucket for reliability)
+  const entries = T4_LAT_POOL
+    .filter(lat => buckets[lat] && buckets[lat].total >= 2)
+    .map(lat => ({ lat, rate: buckets[lat].lag / buckets[lat].total }));
+
+  if (entries.length < 2) { el.innerHTML = '—<span class="val-unit">ms</span>'; return; }
+
+  // Linear interpolation to find crossing at 0.5
+  let jnd = null;
+  for (let i = 0; i < entries.length - 1; i++) {
+    const a = entries[i], b = entries[i+1];
+    if ((a.rate <= 0.5 && b.rate >= 0.5) || (a.rate >= 0.5 && b.rate <= 0.5)) {
+      const t = (0.5 - a.rate) / (b.rate - a.rate);
+      jnd = a.lat + t * (b.lat - a.lat);
+      break;
+    }
+  }
+
+  if (jnd === null) {
+    // All rates below 0.5 or all above
+    const allBelow = entries.every(e => e.rate < 0.5);
+    el.innerHTML = (allBelow ? '> ' : '< ') + entries[allBelow ? entries.length-1 : 0].lat + '<span class="val-unit">ms</span>';
+  } else {
+    el.innerHTML = Math.round(jnd) + '<span class="val-unit">ms</span>';
+  }
+}
+
+// ── Export ──────────────────────────────────────────────────────
+function t4_exportCSV() {
+  if (!t4_trials.length) return;
+  const rows = ['trial,latency_ms,response'];
+  t4_trials.forEach((tr, i) => rows.push(`${i+1},${tr.latency},${tr.response}`));
+  const a = document.createElement('a');
+  a.href     = URL.createObjectURL(new Blob([rows.join('\n')], { type: 'text/csv' }));
+  a.download = 't4-latency-blind-test.csv';
+  a.click();
+}
+
+// ── Reset ───────────────────────────────────────────────────────
+function t4_reset() {
+  // Cancel any in-flight rAF
+  if (t4_rafId) { cancelAnimationFrame(t4_rafId); t4_rafId = null; }
+
+  t4_trials        = [];
+  t4_pendingLat    = null;
+  t4_drawing       = false;
+  t4_awaitingResp  = false;
+  t4_done          = false;
+  t4_simQueue      = [];
+  t4_simRendered   = [];
+  t4_pointerPath   = [];
+  t4_latQueue      = t4_buildLatQueue();
+
+  t4_ctx.clearRect(0, 0, t4_canvas.width, t4_canvas.height);
+  t4_canvas.style.opacity = '1';
+  t4_canvas.style.cursor  = 'crosshair';
+
+  document.getElementById('t4-response-area').style.display = 'none';
+  document.getElementById('t4-trial-counter').textContent   = `Trial 0 / ${T4_MIN_TRIALS}`;
+  document.getElementById('t4-progress-bar').style.width    = '0%';
+  document.getElementById('t4-progress-label').textContent  = `0 / ${T4_MIN_TRIALS}`;
+  document.getElementById('t4-jnd-val').innerHTML           = '—<span class="val-unit">ms</span>';
+  document.getElementById('t4-results-note').textContent    = '—';
+  document.getElementById('t4-results-body').textContent    = 'no trials yet';
+  document.getElementById('t4-recent-trials').textContent   = '—';
+  t4_setStatus('draw a stroke to begin');
+}
+
+// ── Init ────────────────────────────────────────────────────────
+t4_latQueue = t4_buildLatQueue();
+</script>
 
 
-<!-- ── 05 Business Model ── -->
-<section>
-  <div class="section-tag">05 — Business Model</div>
+<!-- ═══════════════════════════════════════════ TOOL 5 — V1 TEST HARNESS -->
+<div class="page" id="page-t5">
 
-  <h2>Structure</h2>
+  <!-- Header row -->
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+      <button class="btn active" id="t5-btn-circle" onclick="t5_selectTest('circle')">circle test</button>
+      <button class="btn"        id="t5-btn-line"   onclick="t5_selectTest('line')">line test</button>
+      <button class="btn"        id="t5-btn-edge"   onclick="t5_selectTest('edge')">edge test</button>
+      <button class="btn"        id="t5-btn-all"    onclick="t5_runAll()" style="border-color:var(--accent-a);color:var(--accent-a);">run all</button>
+    </div>
+    <div style="display:flex; gap:6px;">
+      <button class="btn" onclick="t5_clearTest()">clear</button>
+      <button class="btn" onclick="t5_exportCSV()">export CSV</button>
+    </div>
+  </div>
 
-  <h3>V1 — Cost to Manufacture</h3>
-  <table>
-    <tr><th>Component</th><th>Estimated Cost</th></tr>
-    <tr><td>3D printed PLA body</td><td>$1–$2 (material only)</td></tr>
-    <tr><td>Oscillator circuit components</td><td>$3–$5</td></tr>
-    <tr><td>Conductive metal tip (brass/copper rod)</td><td>$1–$2</td></tr>
-    <tr><td>Small LiPo cell</td><td>$2–$4</td></tr>
-    <tr><td>USB-C charging module</td><td>$1–$2</td></tr>
-    <tr><td>Assembly + misc</td><td>$2–$3</td></tr>
-    <tr><td><strong>Estimated total COGS</strong></td><td><strong>$10–$18 per unit</strong></td></tr>
-  </table>
+  <!-- Canvas + instructions -->
+  <div style="position:relative;">
+    <canvas id="t5-canvas" width="1200" height="400" style="width:100%; background:var(--bg2); border-radius:var(--radius);"></canvas>
+    <div id="t5-overlay" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;text-align:center;">
+      <div id="t5-instruction" style="font-size:14px;color:var(--text2);letter-spacing:0.06em;"></div>
+      <div id="t5-stroke-counter" style="font-size:11px;color:var(--text3);margin-top:6px;"></div>
+    </div>
+  </div>
 
-  <h3>Pricing</h3>
-  <p>V1 retail target: under $30. At a $10–$18 COGS that leaves viable margin for small-batch production while staying accessible to the target customer. V2 pricing is to be determined pending hardware cost research on transparent conductive film and controller components.</p>
+  <!-- Results row -->
+  <div class="grid-2" style="margin-top:10px;">
 
-  <h3>Target Customer</h3>
-  <p>Primary: Students and casual artists with older tablets who want a real drawing tool under $30. Secondary (V2): Creative professionals and power users who want full precision stylus capability on any device they already own.</p>
+    <!-- Per-test results -->
+    <div class="panel">
+      <div class="label" style="margin-bottom:10px;">test results</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
 
-  <h3>Distribution</h3>
-  <ul>
-    <li>Initial — direct sales via online storefront (Shopify or similar). Low overhead, no middleman margin compression at early stage.</li>
-    <li>Growth — Amazon marketplace. Stylus is the kind of impulse-buy accessory that performs well in search-driven purchase behavior.</li>
-    <li>V2 expansion — wholesale to tablet accessory retailers, potentially education procurement channels where older devices are common.</li>
-    <li>Long term — licensing the overlay technology to tablet manufacturers directly as an OEM precision input layer.</li>
-  </ul>
-</section>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div style="font-size:12px; font-weight:500;">circle test</div>
+            <div id="t5-circle-detail" style="font-size:11px;color:var(--text2); margin-top:2px;">—</div>
+          </div>
+          <div id="t5-circle-badge" style="font-size:12px;padding:3px 10px;border-radius:var(--radius);background:var(--bg3);color:var(--text3);">—</div>
+        </div>
 
+        <div style="height:0.5px;background:var(--border);"></div>
 
-<!-- ── 06 Roadmap ── -->
-<section>
-  <div class="section-tag">06 — Roadmap</div>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div style="font-size:12px; font-weight:500;">line test</div>
+            <div id="t5-line-detail" style="font-size:11px;color:var(--text2); margin-top:2px;">—</div>
+          </div>
+          <div id="t5-line-badge" style="font-size:12px;padding:3px 10px;border-radius:var(--radius);background:var(--bg3);color:var(--text3);">—</div>
+        </div>
 
-  <h2>Build Phases</h2>
+        <div style="height:0.5px;background:var(--border);"></div>
 
-  <table>
-    <tr><th>Phase</th><th>Milestone</th><th>Status</th></tr>
-    <tr>
-      <td>Research</td>
-      <td>Understand capacitive screen tech, active stylus circuit design, frequency requirements</td>
-      <td>In Progress</td>
-    </tr>
-    <tr>
-      <td>Body Design</td>
-      <td>3D printed body — pencil dimensions, hollow, tip socket, printable without supports</td>
-      <td>STL Complete</td>
-    </tr>
-    <tr>
-      <td>Circuit Prototype</td>
-      <td>Build oscillator circuit on breadboard, test signal against iPad Air 2 screen</td>
-      <td>Planned</td>
-    </tr>
-    <tr>
-      <td>Tip Testing</td>
-      <td>Verify fine brass/copper tip registers reliably with active circuit powered on</td>
-      <td>Planned</td>
-    </tr>
-    <tr>
-      <td>Integration</td>
-      <td>Miniaturize circuit, fit into printed body with battery, test full assembly</td>
-      <td>Planned</td>
-    </tr>
-    <tr>
-      <td>V1 Working Prototype</td>
-      <td>Functional fine tip active stylus operating on older capacitive screen</td>
-      <td>Planned</td>
-    </tr>
-    <tr>
-      <td>V2 Research</td>
-      <td>Transparent conductive film, sensing grid design, HID input translation</td>
-      <td>Future</td>
-    </tr>
-    <tr>
-      <td>V2 Prototype</td>
-      <td>Working overlay with full pressure + tilt detection on a test device</td>
-      <td>Future</td>
-    </tr>
-  </table>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div style="font-size:12px; font-weight:500;">edge test</div>
+            <div id="t5-edge-detail" style="font-size:11px;color:var(--text2); margin-top:2px;">—</div>
+          </div>
+          <div id="t5-edge-badge" style="font-size:12px;padding:3px 10px;border-radius:var(--radius);background:var(--bg3);color:var(--text3);">—</div>
+        </div>
 
-  <h3>Key Technical Milestones</h3>
-  <ul>
-    <li>Identify exact sensing frequency of iPad Air 2 display</li>
-    <li>Build and validate oscillator circuit on breadboard</li>
-    <li>Confirm fine metal tip registers reliably with active signal</li>
-    <li>Miniaturize circuit to fit inside printed body</li>
-    <li>Source LiPo cell and USB-C charging module at target cost</li>
-    <li>V2: Research ITO film sourcing and transparent sensing grid design</li>
-    <li>V2: Prototype Bluetooth HID input translation from overlay to tablet</li>
-  </ul>
-</section>
+        <div style="height:0.5px;background:var(--border);"></div>
 
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div style="font-size:13px; font-weight:500;">overall v1 verdict</div>
+          <div id="t5-overall-badge" style="font-size:13px;font-weight:600;padding:4px 14px;border-radius:var(--radius);background:var(--bg3);color:var(--text3);">—</div>
+        </div>
 
-<!-- ── 07 Research Curriculum ── -->
-<section>
-  <div class="section-tag">07 — Research Curriculum</div>
+      </div>
+    </div>
 
-  <h2>What Needs To Be Learned</h2>
-  <p>Listed in dependency order. Each area builds directly on the one before it. Skipping the fundamentals means not understanding why the decisions at the product level were made.</p>
+    <!-- Thresholds -->
+    <div class="panel">
+      <div class="label" style="margin-bottom:10px;">thresholds</div>
 
-  <h3>How Screens Work</h3>
-  <ul>
-    <li>How capacitive touchscreens detect input — the electrostatic field model</li>
-    <li>Mutual capacitance vs self capacitance — how they differ and where each is used</li>
-    <li>Sensing grids — how they're spaced and why that spacing creates the fine tip problem</li>
-    <li>Why a fine point fails without signal boosting</li>
-  </ul>
+      <div style="margin-bottom:10px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px;color:var(--text2);">jitter limit</span>
+          <span style="font-size:12px;font-weight:500;" id="t5-lbl-jitter">0.80 px</span>
+        </div>
+        <input type="range" min="0.5" max="1.5" step="0.05" value="0.8" id="t5-sl-jitter" oninput="t5_onThreshold()">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:2px;"><span>0.5 px</span><span>1.5 px</span></div>
+      </div>
 
-  <h3>Electronics Fundamentals</h3>
-  <ul>
-    <li>Voltage, current, resistance — Ohm's Law and circuit basics</li>
-    <li>What a capacitor is and how it stores and releases charge</li>
-    <li>What an oscillator circuit is — how it generates a repeating signal</li>
-    <li>Frequency — what it means, how it's measured, why matching matters</li>
-    <li>Reading and building from circuit schematics</li>
-    <li>Breadboard prototyping — how to build circuits without soldering for testing</li>
-    <li>Basic soldering — joining components permanently</li>
-    <li>Using a multimeter — measuring voltage, current, continuity</li>
-  </ul>
+      <div style="margin-bottom:10px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px;color:var(--text2);">deviation limit</span>
+          <span style="font-size:12px;font-weight:500;" id="t5-lbl-dev">2.00 px</span>
+        </div>
+        <input type="range" min="1" max="4" step="0.1" value="2.0" id="t5-sl-dev" oninput="t5_onThreshold()">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:2px;"><span>1 px</span><span>4 px</span></div>
+      </div>
 
-  <h3>Active Stylus Specific</h3>
-  <ul>
-    <li>How active stylus oscillator circuits work end to end</li>
-    <li>Capacitive coupling — how the tip transfers signal to the screen</li>
-    <li>Frequency matching — finding and targeting the right range for a specific screen</li>
-    <li>Signal boosting — why it works and how to tune it</li>
-    <li>Battery and power management — protecting a LiPo, managing draw, charge circuits</li>
-  </ul>
+      <div style="margin-bottom:10px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px;color:var(--text2);">edge reach limit</span>
+          <span style="font-size:12px;font-weight:500;" id="t5-lbl-edge">10 px</span>
+        </div>
+        <input type="range" min="5" max="25" step="1" value="10" id="t5-sl-edge" oninput="t5_onThreshold()">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:2px;"><span>5 px</span><span>25 px</span></div>
+      </div>
 
-  <h3>Materials</h3>
-  <ul>
-    <li>What makes a material conductive — electron mobility basics</li>
-    <li>Brass and copper — why they work for stylus tips and how to shape them</li>
-    <li>Metal finishing — getting a smooth, consistent fine point</li>
-  </ul>
+      <div style="margin-top:12px; padding-top:10px; border-top:0.5px solid var(--border); font-size:11px; color:var(--text3); line-height:1.6;">
+        dropout detection window: 20 px from edge<br>
+        strokes required per test: 3–5<br>
+        edge test: draw top → bottom → left → right
+      </div>
+    </div>
+  </div>
 
-  <h3>3D Design and Fabrication</h3>
-  <ul>
-    <li>OpenSCAD or Fusion 360 — parametric design for precision tolerancing</li>
-    <li>Designing for FDM print tolerances — gaps, clearances, snap fits</li>
-    <li>Fitting electronics inside printed enclosures — thermal, spatial, and access considerations</li>
-    <li>Print settings — infill, wall thickness, orientation decisions</li>
-  </ul>
+  <!-- Run-all sequence status -->
+  <div id="t5-runall-status" style="display:none; margin-top:10px; padding:10px 14px; background:var(--bg2); border:0.5px solid var(--border); border-radius:var(--radius); font-size:12px; color:var(--text2);">
+    run all: <span id="t5-runall-msg">—</span>
+  </div>
 
-  <h3>V2 — Overlay and Standards</h3>
-  <ul>
-    <li>ITO (Indium Tin Oxide) — the standard transparent conductor, how it's used in sensing films</li>
-    <li>Sensing grid design — density, spacing, detection precision tradeoffs</li>
-    <li>USI 2.0 specification — usistylus.org — the open standard for universal stylus input</li>
-    <li>Microsoft Pen Protocol — MPP, how it works on Windows devices</li>
-    <li>Bluetooth HID protocol — how the overlay communicates input back to the device as touch events</li>
-    <li>Signal processing at the controller level — translating raw stylus detection into position, pressure, tilt</li>
-  </ul>
+</div>
 
-  <h3>Business and Legal</h3>
-  <ul>
-    <li>Patent research — searching existing stylus and overlay patents to understand what's protected</li>
-    <li>Small batch manufacturing basics — PCB fabrication, assembly houses, unit economics</li>
-    <li>Consumer electronics regulatory basics — FCC, CE marking, what certification a Bluetooth device requires</li>
-    <li>Shopify and direct-to-consumer sales fundamentals</li>
-    <li>Amazon seller marketplace — listing strategy, product photography, review mechanics</li>
-  </ul>
-</section>
+<script>
+// ═══════════════════════════════════════════════════════════════
+// TOOL 5 — V1 TEST HARNESS
+// ═══════════════════════════════════════════════════════════════
 
-<hr>
+const t5_canvas  = document.getElementById('t5-canvas');
+const t5_ctx     = t5_canvas.getContext('2d');
 
-<footer>
-  <span>Project [UNNAMED] — Product Documentation v0.4</span>
-  <span>Tech Entrepreneurship · Jaden Thompson · 2026</span>
-</footer>
+// ── State ────────────────────────────────────────────────────────
+let t5_activeTest   = 'circle';   // 'circle' | 'line' | 'edge'
+let t5_drawing      = false;
+let t5_buffer       = [];         // current live stroke
+let t5_strokes      = [];         // completed strokes for active test
+
+// Per-test completed stroke banks
+let t5_circleStrokes = [];
+let t5_lineStrokes   = [];
+let t5_edgeStrokes   = [];        // edge strokes tagged by edge: {pts, edge}
+
+let t5_edgePhase    = 0;          // 0=top,1=bottom,2=left,3=right
+const T5_EDGE_LABELS = ['top edge','bottom edge','left edge','right edge'];
+
+// Results cache
+let t5_results = { circle: null, line: null, edge: null };
+
+// Thresholds (canvas-coordinate pixels — match canvas 1200×400)
+let t5_thresh = { jitter: 0.8, deviation: 2.0, edgeReach: 10 };
+
+// Run-all state
+let t5_runAllActive  = false;
+let t5_runAllQueue   = [];
+let t5_runAllIdx     = 0;
+
+const T5_STROKES_NEEDED = 5;
+const T5_DROPOUT_WINDOW = 20;  // px from edge to check for dropouts
+const T5_MAX_GAP_PX     = 40;  // gap larger than this = dropout
+
+// ── Threshold sliders ────────────────────────────────────────────
+function t5_onThreshold() {
+  t5_thresh.jitter    = parseFloat(document.getElementById('t5-sl-jitter').value);
+  t5_thresh.deviation = parseFloat(document.getElementById('t5-sl-dev').value);
+  t5_thresh.edgeReach = parseFloat(document.getElementById('t5-sl-edge').value);
+  document.getElementById('t5-lbl-jitter').textContent = t5_thresh.jitter.toFixed(2) + ' px';
+  document.getElementById('t5-lbl-dev').textContent    = t5_thresh.deviation.toFixed(2) + ' px';
+  document.getElementById('t5-lbl-edge').textContent   = t5_thresh.edgeReach.toFixed(0) + ' px';
+  // Re-evaluate any completed tests with new thresholds
+  if (t5_circleStrokes.length >= 3) t5_evaluateCircle();
+  if (t5_lineStrokes.length >= 3)   t5_evaluateLine();
+  if (t5_edgeStrokes.length >= 4)   t5_evaluateEdge();
+  t5_updateOverall();
+}
+
+// ── Test selection ────────────────────────────────────────────────
+function t5_selectTest(name) {
+  t5_activeTest = name;
+  t5_runAllActive = false;
+  document.getElementById('t5-runall-status').style.display = 'none';
+  ['circle','line','edge'].forEach(n => {
+    document.getElementById('t5-btn-'+n).className = n===name ? 'btn active' : 'btn';
+  });
+  t5_renderCanvas();
+  t5_updateInstruction();
+}
+
+function t5_clearTest() {
+  if (t5_activeTest === 'circle') { t5_circleStrokes=[]; t5_results.circle=null; t5_updateBadge('circle',null,null); }
+  if (t5_activeTest === 'line')   { t5_lineStrokes=[];   t5_results.line=null;   t5_updateBadge('line',null,null); }
+  if (t5_activeTest === 'edge')   { t5_edgeStrokes=[];   t5_edgePhase=0; t5_results.edge=null; t5_updateBadge('edge',null,null); }
+  t5_buffer  = [];
+  t5_drawing = false;
+  t5_renderCanvas();
+  t5_updateInstruction();
+  t5_updateOverall();
+}
+
+// ── Run-all ───────────────────────────────────────────────────────
+function t5_runAll() {
+  // Clear all
+  t5_circleStrokes=[]; t5_lineStrokes=[]; t5_edgeStrokes=[]; t5_edgePhase=0;
+  t5_results = {circle:null,line:null,edge:null};
+  ['circle','line','edge'].forEach(n=>t5_updateBadge(n,null,null));
+  t5_updateOverall();
+
+  t5_runAllActive = true;
+  t5_runAllQueue  = ['circle','line','edge'];
+  t5_runAllIdx    = 0;
+  document.getElementById('t5-runall-status').style.display = 'block';
+  t5_runAllAdvance();
+}
+
+function t5_runAllAdvance() {
+  if (t5_runAllIdx >= t5_runAllQueue.length) {
+    document.getElementById('t5-runall-msg').textContent = 'all tests complete';
+    return;
+  }
+  const name = t5_runAllQueue[t5_runAllIdx];
+  t5_selectTest(name);
+  document.getElementById('t5-runall-msg').textContent =
+    `step ${t5_runAllIdx+1}/3 — ${name} test — draw strokes, then results auto-advance`;
+}
+
+// ── Canvas pointer events ─────────────────────────────────────────
+function t5_getXY(e) {
+  const rect = t5_canvas.getBoundingClientRect();
+  const sx = t5_canvas.width  / rect.width;
+  const sy = t5_canvas.height / rect.height;
+  if (e.touches) return { x:(e.touches[0].clientX-rect.left)*sx, y:(e.touches[0].clientY-rect.top)*sy };
+  return { x:(e.clientX-rect.left)*sx, y:(e.clientY-rect.top)*sy };
+}
+
+t5_canvas.addEventListener('pointerdown', e => {
+  e.preventDefault(); t5_canvas.setPointerCapture(e.pointerId);
+  t5_drawing = true; t5_buffer = [];
+  const {x,y} = t5_getXY(e);
+  t5_buffer.push({x,y,t:performance.now()});
+});
+
+t5_canvas.addEventListener('pointermove', e => {
+  if (!t5_drawing) return; e.preventDefault();
+  const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+  for (const ev of evs) {
+    const {x,y} = t5_getXY(ev);
+    t5_buffer.push({x,y,t:performance.now()});
+  }
+  t5_renderCanvas();
+  t5_drawLiveStroke(t5_buffer);
+});
+
+t5_canvas.addEventListener('pointerup', e => {
+  if (!t5_drawing) return;
+  t5_drawing = false;
+  if (t5_buffer.length > 3) t5_commitStroke([...t5_buffer]);
+  t5_buffer = [];
+});
+
+t5_canvas.addEventListener('pointercancel', e => {
+  t5_drawing = false; t5_buffer = [];
+});
+
+// ── Stroke commit ─────────────────────────────────────────────────
+function t5_commitStroke(pts) {
+  if (t5_activeTest === 'circle') {
+    t5_circleStrokes.push(pts);
+    if (t5_circleStrokes.length >= 3) t5_evaluateCircle();
+    t5_updateInstruction();
+    if (t5_runAllActive && t5_circleStrokes.length >= T5_STROKES_NEEDED) t5_runAllNext();
+  } else if (t5_activeTest === 'line') {
+    t5_lineStrokes.push(pts);
+    if (t5_lineStrokes.length >= 3) t5_evaluateLine();
+    t5_updateInstruction();
+    if (t5_runAllActive && t5_lineStrokes.length >= T5_STROKES_NEEDED) t5_runAllNext();
+  } else if (t5_activeTest === 'edge') {
+    t5_edgeStrokes.push({ pts, edge: T5_EDGE_LABELS[t5_edgePhase] });
+    t5_edgePhase = Math.min(t5_edgePhase + 1, 3);
+    if (t5_edgeStrokes.length >= 4) t5_evaluateEdge();
+    t5_updateInstruction();
+    if (t5_runAllActive && t5_edgeStrokes.length >= 4) t5_runAllNext();
+  }
+  t5_updateOverall();
+  t5_renderCanvas();
+}
+
+function t5_runAllNext() {
+  t5_runAllIdx++;
+  setTimeout(t5_runAllAdvance, 400);
+}
+
+// ── Metrics / evaluation ──────────────────────────────────────────
+
+// Reuse Tool 1 jitter function
+function t5_computeJitter(pts) { return t1_computeJitter(pts); }
+
+// Average deviation from least-squares best-fit line
+function t5_lineDeviation(pts) {
+  if (pts.length < 2) return 0;
+  const n = pts.length;
+  const mx = pts.reduce((s,p)=>s+p.x,0)/n;
+  const my = pts.reduce((s,p)=>s+p.y,0)/n;
+  let num=0, den=0;
+  for (const p of pts) { num+=(p.x-mx)*(p.y-my); den+=(p.x-mx)**2; }
+  if (Math.abs(den) < 0.001) {
+    // Vertical line — measure x deviation
+    return pts.reduce((s,p)=>s+Math.abs(p.x-mx),0)/n;
+  }
+  const slope = num/den;
+  const intercept = my - slope*mx;
+  // Distance from each point to line: |slope*x - y + intercept| / sqrt(slope^2+1)
+  const denom = Math.sqrt(slope*slope+1);
+  return pts.reduce((s,p)=>s+Math.abs(slope*p.x-p.y+intercept)/denom,0)/n;
+}
+
+// Dropout detection: gaps larger than T5_MAX_GAP_PX within edge window
+function t5_detectDropouts(pts, edge, cw, ch) {
+  // Filter points near the relevant edge
+  let nearEdge;
+  if (edge === 'top edge')    nearEdge = pts.filter(p => p.y < T5_DROPOUT_WINDOW);
+  else if (edge === 'bottom edge') nearEdge = pts.filter(p => p.y > ch - T5_DROPOUT_WINDOW);
+  else if (edge === 'left edge')   nearEdge = pts.filter(p => p.x < T5_DROPOUT_WINDOW);
+  else                             nearEdge = pts.filter(p => p.x > cw - T5_DROPOUT_WINDOW);
+
+  if (nearEdge.length < 2) return { dropout: nearEdge.length === 0, minDist: Infinity };
+
+  let dropout = false;
+  for (let i=1; i<nearEdge.length; i++) {
+    const d = Math.hypot(nearEdge[i].x-nearEdge[i-1].x, nearEdge[i].y-nearEdge[i-1].y);
+    if (d > T5_MAX_GAP_PX) { dropout = true; break; }
+  }
+
+  // Closest approach to edge
+  let minDist;
+  if (edge === 'top edge')    minDist = Math.min(...pts.map(p=>p.y));
+  else if (edge === 'bottom edge') minDist = Math.min(...pts.map(p=>ch-p.y));
+  else if (edge === 'left edge')   minDist = Math.min(...pts.map(p=>p.x));
+  else                             minDist = Math.min(...pts.map(p=>cw-p.x));
+
+  return { dropout, minDist };
+}
+
+function t5_evaluateCircle() {
+  const jitters = t5_circleStrokes.map(s => t5_computeJitter(s));
+  const avg = jitters.reduce((a,v)=>a+v,0)/jitters.length;
+  const pass = avg < t5_thresh.jitter;
+  t5_results.circle = { avg, pass };
+  t5_updateBadge('circle', pass, `avg jitter: ${avg.toFixed(2)} px (target <${t5_thresh.jitter.toFixed(2)} px)`);
+}
+
+function t5_evaluateLine() {
+  const devs = t5_lineStrokes.map(s => t5_lineDeviation(s));
+  const avg = devs.reduce((a,v)=>a+v,0)/devs.length;
+  const pass = avg < t5_thresh.deviation;
+  t5_results.line = { avg, pass };
+  t5_updateBadge('line', pass, `avg deviation: ${avg.toFixed(2)} px (target <${t5_thresh.deviation.toFixed(2)} px)`);
+}
+
+function t5_evaluateEdge() {
+  const cw = t5_canvas.width, ch = t5_canvas.height;
+  let anyDropout = false;
+  let maxMinDist = 0;
+  const details = [];
+
+  for (const { pts, edge } of t5_edgeStrokes) {
+    const { dropout, minDist } = t5_detectDropouts(pts, edge, cw, ch);
+    if (dropout) anyDropout = true;
+    if (isFinite(minDist)) maxMinDist = Math.max(maxMinDist, minDist);
+    details.push({ edge, dropout, minDist: isFinite(minDist) ? minDist.toFixed(1) : '—' });
+  }
+
+  const pass = !anyDropout && maxMinDist <= t5_thresh.edgeReach;
+  t5_results.edge = { pass, anyDropout, maxMinDist, details };
+
+  const dropStr   = anyDropout ? 'dropouts: YES' : 'dropouts: none';
+  const reachStr  = `closest edge reach: ${maxMinDist.toFixed(1)} px`;
+  t5_updateBadge('edge', pass, `${dropStr} — ${reachStr}`);
+}
+
+function t5_updateBadge(test, pass, detail) {
+  const badge  = document.getElementById('t5-'+test+'-badge');
+  const detEl  = document.getElementById('t5-'+test+'-detail');
+  if (pass === null) {
+    badge.textContent = '—';
+    badge.style.background = 'var(--bg3)';
+    badge.style.color = 'var(--text3)';
+    if (detEl) detEl.textContent = '—';
+    return;
+  }
+  badge.textContent = pass ? '✓ PASS' : '✗ FAIL';
+  badge.style.background = pass ? 'rgba(29,158,117,0.15)' : 'rgba(226,75,74,0.15)';
+  badge.style.color = pass ? 'var(--green)' : 'var(--red)';
+  if (detEl) detEl.textContent = detail || '';
+}
+
+function t5_updateOverall() {
+  const el = document.getElementById('t5-overall-badge');
+  const r  = t5_results;
+  if (!r.circle && !r.line && !r.edge) {
+    el.textContent='—'; el.style.background='var(--bg3)'; el.style.color='var(--text3)'; return;
+  }
+  const done  = r.circle !== null && r.line !== null && r.edge !== null;
+  const allOk = done && r.circle.pass && r.line.pass && r.edge.pass;
+  if (!done) {
+    el.textContent='IN PROGRESS'; el.style.background='rgba(239,159,39,0.15)'; el.style.color='var(--orange)'; return;
+  }
+  el.textContent = allOk ? '✓ V1 PASS' : '✗ V1 FAIL';
+  el.style.background = allOk ? 'rgba(29,158,117,0.2)' : 'rgba(226,75,74,0.2)';
+  el.style.color = allOk ? 'var(--green)' : 'var(--red)';
+}
+
+// ── Instructions ──────────────────────────────────────────────────
+function t5_updateInstruction() {
+  const instrEl   = document.getElementById('t5-instruction');
+  const counterEl = document.getElementById('t5-stroke-counter');
+
+  if (t5_activeTest === 'circle') {
+    const n = t5_circleStrokes.length;
+    instrEl.textContent   = n >= T5_STROKES_NEEDED ? 'circle test complete — clear to retry' : 'draw circles';
+    counterEl.textContent = `${n} / ${T5_STROKES_NEEDED} strokes`;
+  } else if (t5_activeTest === 'line') {
+    const n = t5_lineStrokes.length;
+    instrEl.textContent   = n >= T5_STROKES_NEEDED ? 'line test complete — clear to retry' : 'draw straight lines left → right';
+    counterEl.textContent = `${n} / ${T5_STROKES_NEEDED} strokes`;
+  } else {
+    const n = t5_edgeStrokes.length;
+    if (n >= 4) {
+      instrEl.textContent   = 'edge test complete — clear to retry';
+      counterEl.textContent = 'all 4 edges done';
+    } else {
+      instrEl.textContent   = `draw along ${T5_EDGE_LABELS[t5_edgePhase]}`;
+      counterEl.textContent = `edge ${n+1} / 4`;
+    }
+  }
+}
+
+// ── Rendering ─────────────────────────────────────────────────────
+function t5_renderCanvas() {
+  const ctx = t5_ctx;
+  const cw  = t5_canvas.width, ch = t5_canvas.height;
+  ctx.clearRect(0, 0, cw, ch);
+
+  // Draw test-specific guide overlays
+  t5_drawGuides(ctx, cw, ch);
+
+  // Draw committed strokes
+  if (t5_activeTest === 'circle') {
+    t5_circleStrokes.forEach((s,i) => t5_drawCommittedStroke(s, i));
+  } else if (t5_activeTest === 'line') {
+    t5_lineStrokes.forEach((s,i) => t5_drawCommittedStroke(s, i));
+  } else {
+    t5_edgeStrokes.forEach(({pts},i) => t5_drawCommittedStroke(pts, i));
+    // Highlight current edge zone
+    if (t5_edgePhase < 4) t5_highlightEdgeZone(ctx, cw, ch, t5_edgePhase);
+  }
+
+  // Live stroke
+  if (t5_buffer.length > 1) t5_drawLiveStroke(t5_buffer);
+}
+
+function t5_drawGuides(ctx, cw, ch) {
+  ctx.save();
+  if (t5_activeTest === 'circle') {
+    // Faint concentric circles as guide
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    [60,100,140].forEach(r => {
+      ctx.beginPath(); ctx.arc(cw/2, ch/2, r, 0, Math.PI*2); ctx.stroke();
+    });
+  } else if (t5_activeTest === 'line') {
+    // Horizontal guide lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth   = 1;
+    ctx.setLineDash([8, 8]);
+    [80, 160, 200, 240, 320].forEach(y => {
+      ctx.beginPath(); ctx.moveTo(40, y); ctx.lineTo(cw-40, y); ctx.stroke();
+    });
+    ctx.setLineDash([]);
+  } else {
+    // Edge dropout zones
+    ctx.strokeStyle = 'rgba(239,159,39,0.12)';
+    ctx.fillStyle   = 'rgba(239,159,39,0.04)';
+    ctx.lineWidth   = 1;
+    // top
+    ctx.fillRect(0,0,cw,T5_DROPOUT_WINDOW);
+    ctx.strokeRect(0,0,cw,T5_DROPOUT_WINDOW);
+    // bottom
+    ctx.fillRect(0,ch-T5_DROPOUT_WINDOW,cw,T5_DROPOUT_WINDOW);
+    ctx.strokeRect(0,ch-T5_DROPOUT_WINDOW,cw,T5_DROPOUT_WINDOW);
+    // left
+    ctx.fillRect(0,0,T5_DROPOUT_WINDOW,ch);
+    ctx.strokeRect(0,0,T5_DROPOUT_WINDOW,ch);
+    // right
+    ctx.fillRect(cw-T5_DROPOUT_WINDOW,0,T5_DROPOUT_WINDOW,ch);
+    ctx.strokeRect(cw-T5_DROPOUT_WINDOW,0,T5_DROPOUT_WINDOW,ch);
+
+    // Edge reach target lines
+    ctx.strokeStyle = 'rgba(55,138,221,0.25)';
+    ctx.setLineDash([4,4]);
+    const er = t5_thresh.edgeReach;
+    ctx.beginPath(); ctx.moveTo(0,er);   ctx.lineTo(cw,er);   ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,ch-er); ctx.lineTo(cw,ch-er); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(er,0);   ctx.lineTo(er,ch);   ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cw-er,0); ctx.lineTo(cw-er,ch); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  ctx.restore();
+}
+
+function t5_highlightEdgeZone(ctx, cw, ch, phase) {
+  const zones = [
+    {x:0,y:0,w:cw,h:T5_DROPOUT_WINDOW*1.5},
+    {x:0,y:ch-T5_DROPOUT_WINDOW*1.5,w:cw,h:T5_DROPOUT_WINDOW*1.5},
+    {x:0,y:0,w:T5_DROPOUT_WINDOW*1.5,h:ch},
+    {x:cw-T5_DROPOUT_WINDOW*1.5,y:0,w:T5_DROPOUT_WINDOW*1.5,h:ch},
+  ];
+  const z = zones[phase];
+  ctx.save();
+  ctx.fillStyle = 'rgba(55,138,221,0.08)';
+  ctx.fillRect(z.x,z.y,z.w,z.h);
+  ctx.restore();
+}
+
+const T5_STROKE_COLORS = ['#378ADD','#1D9E75','#EF9F27','#D85A30','#9B6DFF'];
+
+function t5_drawCommittedStroke(pts, idx) {
+  if (pts.length < 2) return;
+  const ctx   = t5_ctx;
+  const color = T5_STROKE_COLORS[idx % T5_STROKE_COLORS.length];
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth   = 1.5;
+  ctx.globalAlpha = 0.75;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function t5_drawLiveStroke(pts) {
+  if (pts.length < 2) return;
+  const ctx = t5_ctx;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+  ctx.lineWidth   = 1.5;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (let i=1; i<pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+// ── Export ────────────────────────────────────────────────────────
+function t5_exportCSV() {
+  const ts  = new Date().toISOString().replace(/[:.]/g,'-');
+  const rows = ['test,metric,value,threshold,pass'];
+
+  if (t5_results.circle) {
+    const r = t5_results.circle;
+    rows.push(`circle,avg_jitter_px,${r.avg.toFixed(3)},${t5_thresh.jitter.toFixed(3)},${r.pass?'PASS':'FAIL'}`);
+    t5_circleStrokes.forEach((s,i)=>rows.push(`circle,stroke_${i+1}_jitter_px,${t5_computeJitter(s).toFixed(3)},${t5_thresh.jitter.toFixed(3)},`));
+  }
+  if (t5_results.line) {
+    const r = t5_results.line;
+    rows.push(`line,avg_deviation_px,${r.avg.toFixed(3)},${t5_thresh.deviation.toFixed(3)},${r.pass?'PASS':'FAIL'}`);
+    t5_lineStrokes.forEach((s,i)=>rows.push(`line,stroke_${i+1}_deviation_px,${t5_lineDeviation(s).toFixed(3)},${t5_thresh.deviation.toFixed(3)},`));
+  }
+  if (t5_results.edge) {
+    const r = t5_results.edge;
+    rows.push(`edge,any_dropout,${r.anyDropout?1:0},0,${r.pass?'PASS':'FAIL'}`);
+    rows.push(`edge,max_min_dist_px,${r.maxMinDist.toFixed(1)},${t5_thresh.edgeReach.toFixed(1)},`);
+    r.details.forEach(d=>rows.push(`edge,${d.edge.replace(/ /g,'_')}_dropout,${d.dropout?1:0},0,`));
+    r.details.forEach(d=>rows.push(`edge,${d.edge.replace(/ /g,'_')}_min_dist_px,${d.minDist},${t5_thresh.edgeReach.toFixed(1)},`));
+  }
+
+  const overall = (t5_results.circle?.pass && t5_results.line?.pass && t5_results.edge?.pass) ? 'PASS' : 'FAIL';
+  rows.push(`overall,v1_verdict,,,${ (t5_results.circle && t5_results.line && t5_results.edge) ? overall : 'INCOMPLETE'}`);
+
+  const a = document.createElement('a');
+  a.href     = URL.createObjectURL(new Blob([rows.join('\n')], { type:'text/csv' }));
+  a.download = `t5-v1-test-harness-${ts}.csv`;
+  a.click();
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+t5_updateInstruction();
+t5_renderCanvas();
+</script>
 
 </body>
 </html>
