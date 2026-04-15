@@ -52,7 +52,7 @@ input[type=range] { width: 100%; accent-color: var(--accent-a); }
 
 <div style="padding: 16px 20px 0; border-bottom: 0.5px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
   <span style="font-size:13px; font-weight:500; letter-spacing:0.06em; color:var(--text2);">FINE TIP STYLUS <span style="color:var(--text3);">/ dev tools</span></span>
-  <span style="font-size:11px; color:var(--text3);">v0.2 — pre-hardware</span>
+  <span style="font-size:11px; color:var(--text3);">v0.3 — pre-hardware</span>
 </div>
 
 <div class="nav" id="nav">
@@ -61,6 +61,7 @@ input[type=range] { width: 100%; accent-color: var(--accent-a); }
   <button class="nav-tab" onclick="switchPage('t3')">tool 3 — algorithm playground</button>
   <button class="nav-tab" onclick="switchPage('t4')">tool 4 — latency blind test</button>
   <button class="nav-tab" onclick="switchPage('t5')">tool 5 — v1 test harness</button>
+  <button class="nav-tab" onclick="switchPage('t6')">tool 6 — frequency scanner</button>
 </div>
 
 <!-- ═══════════════════════════════════════════ TOOL 1 -->
@@ -304,6 +305,7 @@ function switchPage(id) {
   if (id === 't3') tabs[2].classList.add('active');
   if (id === 't4') tabs[3].classList.add('active');
   if (id === 't5') tabs[4].classList.add('active');
+  if (id === 't6') tabs[5].classList.add('active');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2305,6 +2307,539 @@ function t5_exportCSV() {
 // ── Init ──────────────────────────────────────────────────────────
 t5_updateInstruction();
 t5_renderCanvas();
+</script>
+
+<!-- ═══════════════════════════════════════════ TOOL 6 — FREQUENCY SCANNER SIMULATOR -->
+<div class="page" id="page-t6">
+
+  <!-- Top controls row -->
+  <div style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; align-items:flex-start;">
+
+    <!-- Screen Type Selector -->
+    <div class="panel" style="flex:0 0 auto; min-width:220px;">
+      <div class="label" style="margin-bottom:8px;">screen type</div>
+      <select id="t6-screen-select" style="width:100%; margin-bottom:10px;" onchange="t6_onScreenChange()">
+        <option value="ipad">iPad (Apple Pencil)</option>
+        <option value="android">Generic Android</option>
+        <option value="windows">Windows (MPP)</option>
+        <option value="cheap">Cheap Tablet</option>
+        <option value="custom">Custom</option>
+      </select>
+
+      <div id="t6-custom-controls" style="display:none;">
+        <div style="margin-bottom:8px;">
+          <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+            <span style="font-size:12px; color:var(--text2);">peak freq (kHz)</span>
+            <span style="font-size:12px; font-weight:500;" id="t6-lbl-peak">220</span>
+          </div>
+          <input type="range" min="100" max="500" step="5" value="220" id="t6-sl-peak" oninput="t6_onCustomChange()">
+        </div>
+        <div>
+          <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+            <span style="font-size:12px; color:var(--text2);">bandwidth (±kHz)</span>
+            <span style="font-size:12px; font-weight:500;" id="t6-lbl-bw">80</span>
+          </div>
+          <input type="range" min="10" max="150" step="5" value="80" id="t6-sl-bw" oninput="t6_onCustomChange()">
+        </div>
+      </div>
+
+      <div id="t6-screen-info" style="margin-top:10px; font-size:11px; color:var(--text2); line-height:1.6;"></div>
+    </div>
+
+    <!-- Scan config + button -->
+    <div class="panel" style="flex:0 0 auto; min-width:200px;">
+      <div class="label" style="margin-bottom:8px;">scan parameters</div>
+      <div style="margin-bottom:10px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px; color:var(--text2);">step size</span>
+          <span style="font-size:12px; font-weight:500;" id="t6-lbl-step">10 kHz</span>
+        </div>
+        <input type="range" min="1" max="50" step="1" value="10" id="t6-sl-step" oninput="t6_onStepChange()">
+        <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text3); margin-top:2px;">
+          <span>fine</span><span>coarse</span>
+        </div>
+      </div>
+      <div style="margin-bottom:10px;">
+        <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:12px; color:var(--text2);">noise level</span>
+          <span style="font-size:12px; font-weight:500;" id="t6-lbl-noise">medium</span>
+        </div>
+        <input type="range" min="0" max="2" step="1" value="1" id="t6-sl-noise" oninput="t6_onNoiseChange()">
+        <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text3); margin-top:2px;">
+          <span>none</span><span>med</span><span>high</span>
+        </div>
+      </div>
+      <button class="btn" id="t6-scan-btn" onclick="t6_runScan()" style="width:100%; margin-top:4px; background:rgba(55,138,221,0.12); border-color:rgba(55,138,221,0.5); color:#378ADD;">▶ run scan</button>
+    </div>
+
+    <!-- Metrics summary after scan -->
+    <div class="panel" style="flex:1; min-width:200px;">
+      <div class="label" style="margin-bottom:8px;">scan summary</div>
+      <div id="t6-summary" style="font-size:12px; color:var(--text2);">no scan run yet</div>
+    </div>
+
+  </div>
+
+  <!-- Frequency response graph -->
+  <div style="margin-bottom:10px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+      <span style="font-size:11px; color:var(--text2); letter-spacing:0.06em; text-transform:uppercase;">frequency response curve</span>
+      <span style="font-size:11px; color:var(--text3);">x: 100kHz – 500kHz &nbsp;/&nbsp; y: detection probability</span>
+    </div>
+    <canvas id="t6-graph-canvas" width="1200" height="240" style="width:100%; background:var(--bg2); border-radius:var(--radius); cursor:default;"></canvas>
+  </div>
+
+  <!-- Progress bar (hidden until scan) -->
+  <div id="t6-progress-wrap" style="display:none; margin-bottom:10px;">
+    <div class="panel" style="padding:10px 16px;">
+      <div class="row" style="margin-bottom:6px; justify-content:space-between;">
+        <span style="font-size:12px; color:var(--text2);" id="t6-progress-label">scanning 100 kHz…</span>
+        <span style="font-size:12px; font-weight:500;" id="t6-progress-pct">0%</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" id="t6-progress-bar" style="width:0%; background:#378ADD;"></div></div>
+    </div>
+  </div>
+
+  <!-- Results panels -->
+  <div class="grid-2" style="margin-bottom:10px;" id="t6-results-grid">
+    <div class="panel" style="background:var(--bg3);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span class="label" style="margin-bottom:0;">working frequencies</span>
+        <span style="font-size:10px; padding:2px 8px; background:rgba(29,158,117,0.15); color:#1D9E75; border-radius:4px;">detection &gt; 80%</span>
+      </div>
+      <div id="t6-res-work" style="font-size:12px; color:var(--text2);">—</div>
+    </div>
+    <div class="panel" style="background:var(--bg3);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span class="label" style="margin-bottom:0;">marginal frequencies</span>
+        <span style="font-size:10px; padding:2px 8px; background:rgba(239,159,39,0.15); color:#EF9F27; border-radius:4px;">30 – 80%</span>
+      </div>
+      <div id="t6-res-marg" style="font-size:12px; color:var(--text2);">—</div>
+    </div>
+    <div class="panel" style="background:var(--bg3);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span class="label" style="margin-bottom:0;">failing frequencies</span>
+        <span style="font-size:10px; padding:2px 8px; background:rgba(226,75,74,0.15); color:#E24B4A; border-radius:4px;">detection &lt; 30%</span>
+      </div>
+      <div id="t6-res-fail" style="font-size:12px; color:var(--text2);">—</div>
+    </div>
+    <div class="panel" style="background:var(--bg3);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <span class="label" style="margin-bottom:0;">recommendation</span>
+        <span style="font-size:10px; padding:2px 8px; background:rgba(55,138,221,0.15); color:#378ADD; border-radius:4px;">v1 target</span>
+      </div>
+      <div id="t6-res-rec" style="font-size:12px; color:var(--text2);">—</div>
+    </div>
+  </div>
+
+  <!-- Educational panel -->
+  <div class="panel" style="background:var(--bg3); margin-bottom:10px;">
+    <div class="label" style="margin-bottom:10px;">how driven-frequency screens work</div>
+    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; font-size:11px; color:var(--text2); line-height:1.7;">
+      <div>
+        <div style="color:var(--text); font-size:11px; font-weight:500; margin-bottom:4px; letter-spacing:0.04em;">DRIVEN FREQUENCY</div>
+        The screen's controller broadcasts an AC signal at a fixed frequency into the sensor grid. It only looks for disturbances at that same frequency. Anything else is noise to it.
+      </div>
+      <div>
+        <div style="color:var(--text); font-size:11px; font-weight:500; margin-bottom:4px; letter-spacing:0.04em;">ACTIVE REJECTION</div>
+        Premium screens (iPad, MPP) use narrow-band filters and ignore signals outside their window. A cheap rubber stylus touching at 0 Hz DC creates a disturbance at all frequencies — but Apple rejects the broadband smear and only accepts 250 kHz.
+      </div>
+      <div>
+        <div style="color:var(--text); font-size:11px; font-weight:500; margin-bottom:4px; letter-spacing:0.04em;">STYLUS DESIGN IMPACT</div>
+        V1 must broadcast at the right frequency for the target screen. Wide-band screens (cheap Android) tolerate a range. Narrow-band screens (iPad) need a frequency-locked oscillator within ±15 kHz or detection drops to zero.
+      </div>
+      <div>
+        <div style="color:var(--text); font-size:11px; font-weight:500; margin-bottom:4px; letter-spacing:0.04em;">V2 OVERLAY BYPASS</div>
+        V2 doesn't emit a frequency — it adds a transparent conductive overlay that modifies the existing electrostatic field the screen is already measuring. No frequency matching needed. Works on every screen, protocol-agnostic.
+      </div>
+    </div>
+  </div>
+
+  <!-- Export row -->
+  <div style="display:flex; justify-content:flex-end;">
+    <button class="btn" id="t6-export-btn" onclick="t6_exportCSV()" style="opacity:0.4; pointer-events:none;">export CSV</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// TOOL 6 — FREQUENCY SCANNER SIMULATOR
+// ═══════════════════════════════════════════════════════════════════
+
+const T6_SCREENS = {
+  ipad: {
+    label: 'iPad (Apple Pencil)',
+    peak: 250, bw: 15,
+    rejection: 'active',
+    noiseBase: 0.04,
+    info: 'Peak 250 kHz · ±15 kHz band · active rejection outside band · requires handshake for full pressure',
+  },
+  android: {
+    label: 'Generic Android',
+    peak: 220, bw: 80,
+    rejection: 'none',
+    noiseBase: 0.10,
+    info: 'Peak 220 kHz · ±80 kHz band · no active rejection · wide tolerance',
+  },
+  windows: {
+    label: 'Windows (MPP)',
+    peak: 300, bw: 40,
+    rejection: 'partial',
+    noiseBase: 0.06,
+    info: 'Peak 300 kHz · ±40 kHz band · partial rejection · expects handshake pattern',
+  },
+  cheap: {
+    label: 'Cheap Tablet',
+    peak: 180, bw: 120,
+    rejection: 'none',
+    noiseBase: 0.15,
+    info: 'Peak 180 kHz · ±120 kHz band · no rejection · very noisy response',
+  },
+  custom: {
+    label: 'Custom',
+    peak: 220, bw: 80,
+    rejection: 'none',
+    noiseBase: 0.08,
+    info: 'User-defined frequency response',
+  },
+};
+
+const T6_NOISE_LEVELS = [0, 0.08, 0.18]; // none, medium, high
+const T6_NOISE_LABELS = ['none', 'medium', 'high'];
+
+const t6_graphCanvas = document.getElementById('t6-graph-canvas');
+const t6_graphCtx    = t6_graphCanvas.getContext('2d');
+
+let t6_currentScreen = 'ipad';
+let t6_scanResults   = null;
+let t6_scanning      = false;
+let t6_scanDots      = []; // [{freq, prob, noisy}] — results of last scan sweep
+
+// ── Response curve math ───────────────────────────────────────────
+function t6_responseCurve(freqKHz, screen) {
+  const { peak, bw, rejection } = screen;
+  const dist = Math.abs(freqKHz - peak);
+
+  // Gaussian envelope within band
+  const sigma = bw / 2.5;
+  let prob = Math.exp(-(dist * dist) / (2 * sigma * sigma));
+
+  // Active rejection: hard cliff outside bw
+  if (rejection === 'active') {
+    if (dist > bw * 1.2) prob = 0;
+    else if (dist > bw) prob *= Math.max(0, 1 - (dist - bw) / (bw * 0.2));
+  }
+
+  // Partial rejection: softer cliff
+  if (rejection === 'partial') {
+    if (dist > bw * 1.5) prob *= 0.05;
+    else if (dist > bw) prob *= Math.max(0.05, 1 - (dist - bw) / (bw * 0.5));
+  }
+
+  return Math.max(0, Math.min(1, prob));
+}
+
+function t6_getScreen() {
+  const s = { ...T6_SCREENS[t6_currentScreen] };
+  if (t6_currentScreen === 'custom') {
+    s.peak = parseInt(document.getElementById('t6-sl-peak').value);
+    s.bw   = parseInt(document.getElementById('t6-sl-bw').value);
+  }
+  return s;
+}
+
+// ── Graph rendering ───────────────────────────────────────────────
+function t6_drawGraph(scanDots) {
+  const canvas = t6_graphCanvas;
+  const ctx    = t6_graphCtx;
+  const W = canvas.width, H = canvas.height;
+  const PAD_L = 52, PAD_R = 20, PAD_T = 16, PAD_B = 36;
+  const gW = W - PAD_L - PAD_R, gH = H - PAD_T - PAD_B;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const freqToX = f => PAD_L + ((f - 100) / 400) * gW;
+  const probToY = p => PAD_T + (1 - p) * gH;
+
+  // Background zones
+  ctx.fillStyle = 'rgba(29,158,117,0.04)';
+  ctx.fillRect(PAD_L, PAD_T + gH * 0.0, gW, gH * 0.2);
+  ctx.fillStyle = 'rgba(239,159,39,0.03)';
+  ctx.fillRect(PAD_L, PAD_T + gH * 0.2, gW, gH * 0.5);
+
+  // Grid lines + Y labels
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.font = '10px ui-monospace, monospace';
+  ctx.textAlign = 'right';
+  [0, 0.2, 0.4, 0.6, 0.8, 1.0].forEach(p => {
+    const y = probToY(p);
+    ctx.beginPath(); ctx.moveTo(PAD_L, y); ctx.lineTo(W - PAD_R, y); ctx.stroke();
+    ctx.fillText(Math.round(p * 100) + '%', PAD_L - 6, y + 3.5);
+  });
+
+  // X axis grid + labels
+  ctx.textAlign = 'center';
+  [100, 150, 200, 250, 300, 350, 400, 450, 500].forEach(f => {
+    const x = freqToX(f);
+    ctx.beginPath(); ctx.moveTo(x, PAD_T); ctx.lineTo(x, H - PAD_B); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillText(f + 'k', x, H - PAD_B + 14);
+  });
+
+  // Threshold reference lines
+  [0.8, 0.3].forEach((p, i) => {
+    const y = probToY(p);
+    const color = i === 0 ? 'rgba(29,158,117,0.4)' : 'rgba(239,159,39,0.4)';
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(PAD_L, y); ctx.lineTo(W - PAD_R, y); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  });
+
+  // Peak marker
+  const screen = t6_getScreen();
+  const peakX = freqToX(screen.peak);
+  ctx.save();
+  ctx.strokeStyle = 'rgba(55,138,221,0.25)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.moveTo(peakX, PAD_T); ctx.lineTo(peakX, H - PAD_B); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(55,138,221,0.6)';
+  ctx.textAlign = 'center';
+  ctx.font = '10px ui-monospace, monospace';
+  ctx.fillText(screen.peak + 'k', peakX, PAD_T - 4);
+  ctx.restore();
+
+  // Smooth response curve (reference)
+  ctx.save();
+  ctx.strokeStyle = 'rgba(55,138,221,0.55)';
+  ctx.lineWidth = 2;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  for (let f = 100; f <= 500; f += 1) {
+    const p = t6_responseCurve(f, screen);
+    const x = freqToX(f), y = probToY(p);
+    f === 100 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Fill under curve
+  ctx.beginPath();
+  for (let f = 100; f <= 500; f += 1) {
+    const p = t6_responseCurve(f, screen);
+    const x = freqToX(f), y = probToY(p);
+    f === 100 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.lineTo(freqToX(500), probToY(0));
+  ctx.lineTo(freqToX(100), probToY(0));
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, PAD_T, 0, H - PAD_B);
+  grad.addColorStop(0, 'rgba(55,138,221,0.22)');
+  grad.addColorStop(1, 'rgba(55,138,221,0.0)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.restore();
+
+  // Scan dots overlay
+  if (scanDots && scanDots.length) {
+    scanDots.forEach(d => {
+      const x = freqToX(d.freq), y = probToY(d.noisy);
+      let color;
+      if (d.noisy >= 0.8)       color = '#1D9E75';
+      else if (d.noisy >= 0.3)  color = '#EF9F27';
+      else                      color = '#E24B4A';
+      ctx.beginPath();
+      ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+    });
+  }
+
+  ctx.restore();
+
+  // Axis labels
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.font = '10px ui-monospace, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('frequency (kHz)', W / 2, H - 2);
+}
+
+// ── Screen change handlers ────────────────────────────────────────
+function t6_onScreenChange() {
+  t6_currentScreen = document.getElementById('t6-screen-select').value;
+  const isCustom = t6_currentScreen === 'custom';
+  document.getElementById('t6-custom-controls').style.display = isCustom ? 'block' : 'none';
+  document.getElementById('t6-screen-info').textContent = T6_SCREENS[t6_currentScreen].info;
+  t6_resetResults();
+  t6_drawGraph(null);
+}
+
+function t6_onCustomChange() {
+  const peak = document.getElementById('t6-sl-peak').value;
+  const bw   = document.getElementById('t6-sl-bw').value;
+  document.getElementById('t6-lbl-peak').textContent = peak;
+  document.getElementById('t6-lbl-bw').textContent   = bw;
+  T6_SCREENS.custom.info = `Custom · Peak ${peak} kHz · ±${bw} kHz band`;
+  document.getElementById('t6-screen-info').textContent = T6_SCREENS.custom.info;
+  t6_drawGraph(null);
+}
+
+function t6_onStepChange() {
+  const v = document.getElementById('t6-sl-step').value;
+  document.getElementById('t6-lbl-step').textContent = v + ' kHz';
+}
+
+function t6_onNoiseChange() {
+  const v = parseInt(document.getElementById('t6-sl-noise').value);
+  document.getElementById('t6-lbl-noise').textContent = T6_NOISE_LABELS[v];
+}
+
+// ── Scan logic ────────────────────────────────────────────────────
+function t6_runScan() {
+  if (t6_scanning) return;
+  t6_scanning = true;
+  t6_scanDots = [];
+  t6_resetResults();
+
+  const step      = parseInt(document.getElementById('t6-sl-step').value);
+  const noiseLvl  = T6_NOISE_LEVELS[parseInt(document.getElementById('t6-sl-noise').value)];
+  const screen    = t6_getScreen();
+  const freqs     = [];
+  for (let f = 100; f <= 500; f += step) freqs.push(f);
+
+  document.getElementById('t6-progress-wrap').style.display = 'block';
+  document.getElementById('t6-scan-btn').disabled = true;
+  document.getElementById('t6-scan-btn').textContent = '⏳ scanning…';
+
+  let idx = 0;
+  const totalDuration = 4000; // ms for full sweep
+  const delayPerStep  = Math.max(20, totalDuration / freqs.length);
+
+  function scanStep() {
+    if (idx >= freqs.length) {
+      t6_scanning = false;
+      t6_finalizeScan(screen, step);
+      document.getElementById('t6-scan-btn').disabled = false;
+      document.getElementById('t6-scan-btn').textContent = '▶ run scan';
+      document.getElementById('t6-progress-bar').style.width = '100%';
+      document.getElementById('t6-progress-label').textContent = 'scan complete';
+      return;
+    }
+
+    const f    = freqs[idx];
+    const base = t6_responseCurve(f, screen);
+    // Add correlated noise — real capacitive scans have some variance
+    const noise = (screen.noiseBase + noiseLvl) * (Math.random() * 2 - 1);
+    const noisy = Math.max(0, Math.min(1, base + noise));
+
+    t6_scanDots.push({ freq: f, base, noisy });
+
+    const pct = Math.round(((idx + 1) / freqs.length) * 100);
+    document.getElementById('t6-progress-bar').style.width = pct + '%';
+    document.getElementById('t6-progress-label').textContent = `scanning ${f} kHz…`;
+    document.getElementById('t6-progress-pct').textContent = pct + '%';
+
+    t6_drawGraph(t6_scanDots);
+
+    idx++;
+    setTimeout(scanStep, delayPerStep);
+  }
+
+  scanStep();
+}
+
+function t6_finalizeScan(screen, step) {
+  const working  = t6_scanDots.filter(d => d.noisy >= 0.8).map(d => d.freq);
+  const marginal = t6_scanDots.filter(d => d.noisy >= 0.3 && d.noisy < 0.8).map(d => d.freq);
+  const failing  = t6_scanDots.filter(d => d.noisy < 0.3).map(d => d.freq);
+
+  // Recommended: highest probability result
+  const best = t6_scanDots.reduce((a, b) => b.noisy > a.noisy ? b : a);
+
+  function rangeStr(arr) {
+    if (!arr.length) return '<span style="color:var(--text3)">none</span>';
+    // Group into ranges
+    const groups = [];
+    let start = arr[0], prev = arr[0];
+    for (let i = 1; i < arr.length; i++) {
+      if (arr[i] - prev > step * 1.5) {
+        groups.push([start, prev]);
+        start = arr[i];
+      }
+      prev = arr[i];
+    }
+    groups.push([start, prev]);
+    return groups.map(([a, b]) => a === b ? `<span style="font-weight:500">${a} kHz</span>` : `<span style="font-weight:500">${a}–${b} kHz</span>`).join(', ');
+  }
+
+  document.getElementById('t6-res-work').innerHTML = rangeStr(working);
+  document.getElementById('t6-res-marg').innerHTML = rangeStr(marginal);
+  document.getElementById('t6-res-fail').innerHTML = rangeStr(failing);
+  document.getElementById('t6-res-rec').innerHTML  =
+    `<span style="font-weight:500; color:#378ADD;">${best.freq} kHz</span> &nbsp;—&nbsp; ${Math.round(best.noisy * 100)}% detection probability`;
+
+  document.getElementById('t6-summary').innerHTML =
+    `<div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; line-height:1.8;">` +
+    `<span style="color:var(--text2)">screen</span><span>${screen.label}</span>` +
+    `<span style="color:var(--text2)">peak freq</span><span>${screen.peak} kHz</span>` +
+    `<span style="color:var(--text2)">bandwidth</span><span>±${screen.bw} kHz</span>` +
+    `<span style="color:var(--text2)">rejection</span><span>${screen.rejection}</span>` +
+    `<span style="color:var(--text2)">working bands</span><span style="color:#1D9E75">${working.length} points</span>` +
+    `<span style="color:var(--text2)">marginal bands</span><span style="color:#EF9F27">${marginal.length} points</span>` +
+    `<span style="color:var(--text2)">failing bands</span><span style="color:#E24B4A">${failing.length} points</span>` +
+    `</div>`;
+
+  t6_scanResults = { screen, step, dots: t6_scanDots, working, marginal, failing, best };
+
+  const exportBtn = document.getElementById('t6-export-btn');
+  exportBtn.style.opacity = '1';
+  exportBtn.style.pointerEvents = 'auto';
+}
+
+function t6_resetResults() {
+  ['t6-res-work','t6-res-marg','t6-res-fail','t6-res-rec'].forEach(id => {
+    document.getElementById(id).textContent = '—';
+  });
+  document.getElementById('t6-summary').textContent = 'no scan run yet';
+  document.getElementById('t6-progress-wrap').style.display = 'none';
+  document.getElementById('t6-progress-bar').style.width = '0%';
+  document.getElementById('t6-export-btn').style.opacity = '0.4';
+  document.getElementById('t6-export-btn').style.pointerEvents = 'none';
+  t6_scanResults = null;
+  t6_scanDots = [];
+}
+
+// ── Export ────────────────────────────────────────────────────────
+function t6_exportCSV() {
+  if (!t6_scanResults) return;
+  const ts = new Date().toISOString().replace(/[:.]/g, '-');
+  const { screen, dots } = t6_scanResults;
+  const rows = [
+    `# Fine Tip Stylus — Tool 6 Frequency Scan`,
+    `# Screen: ${screen.label}  Peak: ${screen.peak}kHz  BW: ±${screen.bw}kHz  Rejection: ${screen.rejection}`,
+    `freq_kHz,base_prob,measured_prob,classification`,
+  ];
+  dots.forEach(d => {
+    const cls = d.noisy >= 0.8 ? 'WORK' : d.noisy >= 0.3 ? 'MARGINAL' : 'FAIL';
+    rows.push(`${d.freq},${d.base.toFixed(4)},${d.noisy.toFixed(4)},${cls}`);
+  });
+  const a = document.createElement('a');
+  a.href     = URL.createObjectURL(new Blob([rows.join('\n')], { type: 'text/csv' }));
+  a.download = `t6-freq-scan-${screen.label.replace(/[^a-z0-9]/gi,'_').toLowerCase()}-${ts}.csv`;
+  a.click();
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+(function t6_init() {
+  document.getElementById('t6-screen-info').textContent = T6_SCREENS.ipad.info;
+  t6_drawGraph(null);
+})();
 </script>
 
 </body>
