@@ -24,8 +24,8 @@
   --radius-lg: 12px;
 }
 body { font-family: ui-monospace, 'Cascadia Code', monospace; background: var(--bg); color: var(--text); min-height: 100vh; }
-.nav { display: flex; gap: 2px; padding: 16px 20px 0; border-bottom: 0.5px solid var(--border); }
-.nav-tab { font-size: 12px; padding: 8px 16px; border: 0.5px solid transparent; border-bottom: none; border-radius: var(--radius) var(--radius) 0 0; cursor: pointer; color: var(--text2); background: transparent; font-family: inherit; letter-spacing: 0.05em; }
+.nav { display: flex; flex-wrap: wrap; gap: 2px; padding: 16px 20px 0; border-bottom: 0.5px solid var(--border); overflow-x: auto; }
+.nav-tab { font-size: 11px; padding: 7px 13px; border: 0.5px solid transparent; border-bottom: none; border-radius: var(--radius) var(--radius) 0 0; cursor: pointer; color: var(--text2); background: transparent; font-family: inherit; letter-spacing: 0.04em; white-space: nowrap; }
 .nav-tab:hover { color: var(--text); background: var(--bg2); }
 .nav-tab.active { color: var(--text); background: var(--bg2); border-color: var(--border); }
 .page { display: none; padding: 20px; }
