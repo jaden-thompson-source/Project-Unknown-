@@ -52,7 +52,7 @@ input[type=range] { width: 100%; accent-color: var(--accent-a); }
 
 <div style="padding: 16px 20px 0; border-bottom: 0.5px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
   <span style="font-size:13px; font-weight:500; letter-spacing:0.06em; color:var(--text2);">FINE TIP STYLUS <span style="color:var(--text3);">/ dev tools</span></span>
-  <span style="font-size:11px; color:var(--text3);">v0.3 — pre-hardware</span>
+  <span style="font-size:11px; color:var(--text3);">v0.4 — pre-hardware</span>
 </div>
 
 <div class="nav" id="nav">
@@ -62,6 +62,7 @@ input[type=range] { width: 100%; accent-color: var(--accent-a); }
   <button class="nav-tab" onclick="switchPage('t4')">tool 4 — latency blind test</button>
   <button class="nav-tab" onclick="switchPage('t5')">tool 5 — v1 test harness</button>
   <button class="nav-tab" onclick="switchPage('t6')">tool 6 — frequency scanner</button>
+  <button class="nav-tab" onclick="switchPage('t7')" style="border-color:rgba(155,109,255,0.35); color:#9B6DFF;">tool 7 — v2 system simulator</button>
 </div>
 
 <!-- ═══════════════════════════════════════════ TOOL 1 -->
@@ -306,6 +307,7 @@ function switchPage(id) {
   if (id === 't4') tabs[3].classList.add('active');
   if (id === 't5') tabs[4].classList.add('active');
   if (id === 't6') tabs[5].classList.add('active');
+  if (id === 't7') tabs[6].classList.add('active');
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2840,6 +2842,525 @@ function t6_exportCSV() {
   document.getElementById('t6-screen-info').textContent = T6_SCREENS.ipad.info;
   t6_drawGraph(null);
 })();
+</script>
+
+<!-- ═══════════════════════════════════════════ TOOL 7 — V2 FULL SYSTEM SIMULATOR -->
+<div class="page" id="page-t7">
+
+  <!-- Pipeline stage header -->
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+    <span style="font-size:11px; color:var(--text3); letter-spacing:0.08em; text-transform:uppercase; margin-right:4px;">pipeline</span>
+    <span style="font-size:11px; padding:3px 10px; border-radius:var(--radius); background:rgba(55,138,221,0.12); color:#378ADD;">① input</span>
+    <span style="color:var(--text3); font-size:11px;">→</span>
+    <span style="font-size:11px; padding:3px 10px; border-radius:var(--radius); background:rgba(155,109,255,0.12); color:#9B6DFF;">② grid</span>
+    <span style="color:var(--text3); font-size:11px;">→</span>
+    <span style="font-size:11px; padding:3px 10px; border-radius:var(--radius); background:rgba(29,158,117,0.12); color:#1D9E75;">③ centroid</span>
+    <span style="color:var(--text3); font-size:11px;">→</span>
+    <span style="font-size:11px; padding:3px 10px; border-radius:var(--radius); background:rgba(239,159,39,0.12); color:#EF9F27;">④ filter</span>
+    <span style="color:var(--text3); font-size:11px;">→</span>
+    <span style="font-size:11px; padding:3px 10px; border-radius:var(--radius); background:rgba(216,90,48,0.12); color:#D85A30;">⑤ latency</span>
+    <span style="color:var(--text3); font-size:11px;">→</span>
+    <span style="font-size:11px; padding:3px 10px; border-radius:var(--radius); background:rgba(232,232,232,0.07); color:#e8e8e8;">⑥ output</span>
+    <div style="flex:1;"></div>
+    <button class="btn" onclick="t7_clear()">clear</button>
+    <button class="btn" onclick="t7_exportConfig()" style="border-color:rgba(55,138,221,0.5); color:#378ADD;">export config</button>
+  </div>
+
+  <!-- Controls row -->
+  <div style="display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
+
+    <div class="panel" style="flex:1; min-width:155px;">
+      <div class="label" style="margin-bottom:8px; color:#9B6DFF;">② grid</div>
+      <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+        <span style="font-size:12px; color:var(--text2);">resolution</span>
+        <span style="font-size:12px; font-weight:500;" id="t7-lbl-grid">16×16</span>
+      </div>
+      <select id="t7-sel-grid" style="width:100%; margin-bottom:8px;" onchange="t7_onParams()">
+        <option value="8">8×8 (coarse)</option>
+        <option value="16" selected>16×16 (v2 target)</option>
+        <option value="32">32×32 (fine)</option>
+      </select>
+      <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+        <span style="font-size:12px; color:var(--text2);">noise</span>
+        <span style="font-size:12px; font-weight:500;" id="t7-lbl-gnoise">0.05</span>
+      </div>
+      <input type="range" min="0" max="0.25" step="0.01" value="0.05" id="t7-sl-gnoise" oninput="t7_onParams()">
+      <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text3); margin-top:2px;"><span>clean</span><span>noisy</span></div>
+    </div>
+
+    <div class="panel" style="flex:1; min-width:155px;">
+      <div class="label" style="margin-bottom:8px; color:#1D9E75;">③ centroid</div>
+      <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+        <span style="font-size:12px; color:var(--text2);">threshold</span>
+        <span style="font-size:12px; font-weight:500;" id="t7-lbl-thresh">0.15</span>
+      </div>
+      <input type="range" min="0.01" max="0.5" step="0.01" value="0.15" id="t7-sl-thresh" oninput="t7_onParams()">
+      <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text3); margin-top:2px;"><span>wide</span><span>tight</span></div>
+      <div style="margin-top:10px; font-size:11px; color:var(--text3); line-height:1.5;">weighted avg of cells above threshold → (x,y,pressure)</div>
+    </div>
+
+    <div class="panel" style="flex:1; min-width:175px;">
+      <div class="label" style="margin-bottom:8px; color:#EF9F27;">④ one euro filter</div>
+      <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+        <span style="font-size:12px; color:var(--text2);">beta</span>
+        <span style="font-size:12px; font-weight:500;" id="t7-lbl-fbeta">0.007</span>
+      </div>
+      <input type="range" min="0.0" max="0.1" step="0.001" value="0.007" id="t7-sl-fbeta" oninput="t7_onParams()">
+      <div style="margin-bottom:10px;"></div>
+      <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+        <span style="font-size:12px; color:var(--text2);">min cutoff</span>
+        <span style="font-size:12px; font-weight:500;" id="t7-lbl-fmc">1.0 Hz</span>
+      </div>
+      <input type="range" min="0.1" max="10" step="0.1" value="1.0" id="t7-sl-fmc" oninput="t7_onParams()">
+    </div>
+
+    <div class="panel" style="flex:1; min-width:155px;">
+      <div class="label" style="margin-bottom:8px; color:#D85A30;">⑤ latency</div>
+      <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+        <span style="font-size:12px; color:var(--text2);">fixed delay</span>
+        <span style="font-size:12px; font-weight:500;" id="t7-lbl-lat">8 ms</span>
+      </div>
+      <input type="range" min="0" max="80" step="1" value="8" id="t7-sl-lat" oninput="t7_onParams()">
+      <div style="margin-bottom:10px;"></div>
+      <div class="row" style="justify-content:space-between; margin-bottom:4px;">
+        <span style="font-size:12px; color:var(--text2);">jitter ±</span>
+        <span style="font-size:12px; font-weight:500;" id="t7-lbl-latj">1 ms</span>
+      </div>
+      <input type="range" min="0" max="15" step="1" value="1" id="t7-sl-latj" oninput="t7_onParams()">
+    </div>
+
+  </div>
+
+  <!-- Canvas row 1: input | grid heatmap -->
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+    <div>
+      <div style="font-size:11px; color:#378ADD; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px;">① input — draw here</div>
+      <canvas id="t7-input-canvas" width="560" height="220"
+        style="width:100%; background:var(--bg2); border:0.5px solid rgba(55,138,221,0.3); border-radius:var(--radius); cursor:crosshair;"></canvas>
+    </div>
+    <div>
+      <div style="font-size:11px; color:#9B6DFF; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px;">② grid heatmap — <span id="t7-heatmap-label">16×16</span></div>
+      <canvas id="t7-grid-canvas" width="560" height="220"
+        style="width:100%; background:var(--bg2); border:0.5px solid rgba(155,109,255,0.3); border-radius:var(--radius); cursor:default;"></canvas>
+    </div>
+  </div>
+
+  <!-- Canvas row 2: centroid raw | final output -->
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+    <div>
+      <div style="font-size:11px; color:#1D9E75; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px;">③ centroid output — raw</div>
+      <canvas id="t7-centroid-canvas" width="560" height="220"
+        style="width:100%; background:var(--bg2); border:0.5px solid rgba(29,158,117,0.3); border-radius:var(--radius);"></canvas>
+    </div>
+    <div>
+      <div style="font-size:11px; color:#e8e8e8; letter-spacing:0.06em; text-transform:uppercase; margin-bottom:6px;">⑥ final output — filtered + latency <span style="color:var(--text3); font-size:10px;" id="t7-lat-indicator"></span></div>
+      <canvas id="t7-output-canvas" width="560" height="220"
+        style="width:100%; background:var(--bg2); border:0.5px solid rgba(232,232,232,0.12); border-radius:var(--radius);"></canvas>
+    </div>
+  </div>
+
+  <!-- Metrics -->
+  <div class="grid-4" style="margin-bottom:10px;">
+    <div class="panel">
+      <div class="label">centroid error</div>
+      <div class="val" id="t7-m-cerr">—<span class="val-unit">px</span></div>
+      <div style="font-size:11px; color:var(--text3); margin-top:4px;">vs raw input pos</div>
+    </div>
+    <div class="panel">
+      <div class="label">filter lag (est)</div>
+      <div class="val" id="t7-m-flag">—<span class="val-unit">ms</span></div>
+      <div style="font-size:11px; color:var(--text3); margin-top:4px;">one euro overhead</div>
+    </div>
+    <div class="panel">
+      <div class="label">output jitter</div>
+      <div class="val" id="t7-m-ojitter">—<span class="val-unit">px</span></div>
+      <div style="font-size:11px; color:var(--text3); margin-top:4px;">final smoothness</div>
+    </div>
+    <div class="panel">
+      <div class="label">total latency</div>
+      <div class="val" id="t7-m-tlat">—<span class="val-unit">ms</span></div>
+      <div style="font-size:11px; color:var(--text3); margin-top:4px;">filter + delay</div>
+    </div>
+  </div>
+
+  <!-- Stroke history -->
+  <div class="panel" style="background:var(--bg3);">
+    <div class="label" style="margin-bottom:8px;">stroke history — pipeline comparison</div>
+    <div id="t7-history" style="font-size:12px; color:var(--text2);">no strokes recorded</div>
+  </div>
+
+  <div style="margin-top:10px; font-size:11px; color:var(--text2);">
+    draw on input canvas — signal propagates through all 5 stages in real time &nbsp;·&nbsp; export config saves parameters as JSON for firmware
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// TOOL 7 — V2 FULL SYSTEM SIMULATOR
+// Pipeline: input → grid (gaussian) → centroid → OEF → latency → output
+// ═══════════════════════════════════════════════════════════════
+
+// ── Canvases ──────────────────────────────────────────────────────
+const t7_iCv = document.getElementById('t7-input-canvas');
+const t7_gCv = document.getElementById('t7-grid-canvas');
+const t7_cCv = document.getElementById('t7-centroid-canvas');
+const t7_oCv = document.getElementById('t7-output-canvas');
+const t7_iCtx = t7_iCv.getContext('2d');
+const t7_gCtx = t7_gCv.getContext('2d');
+const t7_cCtx = t7_cCv.getContext('2d');
+const t7_oCtx = t7_oCv.getContext('2d');
+
+// ── Params ────────────────────────────────────────────────────────
+let t7_p = { N:16, gnoise:0.05, thresh:0.15, fbeta:0.007, fmc:1.0, lat:8, latj:1 };
+
+// ── Per-stroke state ──────────────────────────────────────────────
+let t7_drawing = false;
+let t7_inPts   = [];   // raw input points {x,y,pressure,t}
+let t7_cenPts  = [];   // centroid output points
+let t7_filtPts = [];   // filtered points
+let t7_outRendered = [];
+let t7_queue   = [];   // latency queue {x,y,pressure,releaseAt}
+let t7_rafId   = null;
+let t7_strokeHistory = [];
+
+// ── OEF instances (recreated per stroke) ─────────────────────────
+let t7_fx, t7_fy, t7_fp;
+
+function t7_makeOEF(mc, beta) {
+  let xp=null, dxp=0, tp=null;
+  function alp(c,dt){ const tau=1/(2*Math.PI*c); return 1/(1+tau/dt); }
+  return {
+    reset(){ xp=null; dxp=0; tp=null; },
+    filter(x, t_ms){
+      const t=t_ms/1000;
+      if(xp===null){xp=x;tp=t;return x;}
+      const dt=Math.max(t-tp,1e-6); tp=t;
+      const dx=(x-xp)/dt;
+      const ad=alp(1.0,dt);
+      const dxh=ad*dx+(1-ad)*dxp; dxp=dxh;
+      const c=mc+beta*Math.abs(dxh);
+      const a=alp(c,dt);
+      xp=a*x+(1-a)*xp; return xp;
+    }
+  };
+}
+
+function t7_resetFilters() {
+  t7_fx = t7_makeOEF(t7_p.fmc, t7_p.fbeta);
+  t7_fy = t7_makeOEF(t7_p.fmc, t7_p.fbeta);
+  t7_fp = t7_makeOEF(3.0, 0.02);
+}
+
+// ── Grid + centroid math ──────────────────────────────────────────
+function t7_buildGrid(cx, cy, pressure, cw, ch) {
+  const N = t7_p.N;
+  const sigma = N * 0.18;
+  const gx = (cx/cw)*N, gy = (cy/ch)*N;
+  const grid = new Float32Array(N*N);
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+    const d2=(c-gx)**2+(r-gy)**2;
+    const base=Math.exp(-d2/(2*sigma*sigma))*pressure;
+    const noise=t7_p.gnoise*(Math.random()*2-1);
+    grid[r*N+c]=Math.max(0,Math.min(1,base+noise));
+  }
+  return {grid,N};
+}
+
+function t7_centroid(gd, cw, ch) {
+  const {grid,N}=gd, thr=t7_p.thresh;
+  let sw=0,sx=0,sy=0;
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+    const v=grid[r*N+c];
+    if(v<thr)continue;
+    sw+=v; sx+=v*(c+0.5); sy+=v*(r+0.5);
+  }
+  if(sw<0.001)return null;
+  return {x:(sx/sw/N)*cw, y:(sy/sw/N)*ch, pressure:Math.min(1,sw/(N*0.5))};
+}
+
+// ── Heatmap draw ──────────────────────────────────────────────────
+function t7_drawHeatmap(gd, centPt) {
+  const {grid,N}=gd;
+  const W=t7_gCv.width, H=t7_gCv.height;
+  t7_gCtx.clearRect(0,0,W,H);
+  const cw=W/N, ch=H/N;
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+    const v=grid[r*N+c];
+    const R=Math.round(155*(1-v)+29*v);
+    const G=Math.round(109*(1-v)+158*v);
+    const B=Math.round(255*(1-v)+117*v);
+    t7_gCtx.fillStyle=`rgba(${R},${G},${B},${0.15+v*0.85})`;
+    t7_gCtx.fillRect(c*cw,r*ch,cw-0.5,ch-0.5);
+  }
+  // grid lines
+  t7_gCtx.strokeStyle='rgba(255,255,255,0.05)'; t7_gCtx.lineWidth=0.5;
+  for(let i=0;i<=N;i++){
+    t7_gCtx.beginPath(); t7_gCtx.moveTo(i*cw,0); t7_gCtx.lineTo(i*cw,H); t7_gCtx.stroke();
+    t7_gCtx.beginPath(); t7_gCtx.moveTo(0,i*ch); t7_gCtx.lineTo(W,i*ch); t7_gCtx.stroke();
+  }
+  // centroid crosshair
+  if(centPt){
+    const scx=centPt.x*(W/t7_iCv.width), scy=centPt.y*(H/t7_iCv.height);
+    t7_gCtx.strokeStyle='#EF9F27'; t7_gCtx.lineWidth=1.5;
+    t7_gCtx.beginPath(); t7_gCtx.moveTo(scx-9,scy); t7_gCtx.lineTo(scx+9,scy); t7_gCtx.stroke();
+    t7_gCtx.beginPath(); t7_gCtx.moveTo(scx,scy-9); t7_gCtx.lineTo(scx,scy+9); t7_gCtx.stroke();
+    t7_gCtx.beginPath(); t7_gCtx.arc(scx,scy,4,0,Math.PI*2);
+    t7_gCtx.strokeStyle='rgba(239,159,39,0.5)'; t7_gCtx.stroke();
+  }
+}
+
+// ── rAF loop: drain latency queue → output canvas ─────────────────
+function t7_rafLoop(now) {
+  while(t7_queue.length && t7_queue[0].releaseAt<=now){
+    const pt=t7_queue.shift();
+    if(t7_outRendered.length>0){
+      const prev=t7_outRendered[t7_outRendered.length-1];
+      const scx=t7_oCv.width/t7_iCv.width, scy=t7_oCv.height/t7_iCv.height;
+      t7_oCtx.beginPath();
+      t7_oCtx.moveTo(prev.x*scx, prev.y*scy);
+      t7_oCtx.lineTo(pt.x*scx, pt.y*scy);
+      t7_oCtx.strokeStyle='#e8e8e8';
+      t7_oCtx.lineWidth=1+pt.pressure*2.5;
+      t7_oCtx.lineCap='round'; t7_oCtx.stroke();
+    }
+    t7_outRendered.push(pt);
+  }
+  if(t7_drawing||t7_queue.length>0) t7_rafId=requestAnimationFrame(t7_rafLoop);
+  else { t7_rafId=null; }
+}
+function t7_startRaf(){ if(!t7_rafId) t7_rafId=requestAnimationFrame(t7_rafLoop); }
+
+// ── Pointer events ────────────────────────────────────────────────
+function t7_getXY(e){
+  const rect=t7_iCv.getBoundingClientRect();
+  const sx=t7_iCv.width/rect.width, sy=t7_iCv.height/rect.height;
+  const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];
+  return evs.map(ev=>({x:(ev.clientX-rect.left)*sx, y:(ev.clientY-rect.top)*sy,
+    pressure:ev.pressure||0.5, t:ev.timeStamp}));
+}
+
+t7_iCv.addEventListener('pointerdown', e=>{
+  e.preventDefault(); t7_iCv.setPointerCapture(e.pointerId);
+  t7_drawing=true;
+  t7_inPts=[]; t7_cenPts=[]; t7_filtPts=[];
+  t7_queue=[]; t7_outRendered=[];
+  t7_resetFilters();
+  const pts=t7_getXY(e);
+  t7_inPts.push(...pts);
+  t7_processPts(pts);
+  t7_startRaf();
+});
+
+t7_iCv.addEventListener('pointermove', e=>{
+  if(!t7_drawing)return;
+  e.preventDefault();
+  const pts=t7_getXY(e);
+  t7_inPts.push(...pts);
+  t7_processPts(pts);
+});
+
+t7_iCv.addEventListener('pointerup', e=>{
+  if(!t7_drawing)return;
+  t7_drawing=false;
+  t7_startRaf();
+  setTimeout(()=>{ if(t7_inPts.length>3) t7_recordStroke(); },
+    t7_p.lat+t7_p.latj+150);
+});
+
+// ── Process pts through full pipeline ─────────────────────────────
+function t7_processPts(pts){
+  const iW=t7_iCv.width, iH=t7_iCv.height;
+
+  for(const pt of pts){
+    // ① Draw input
+    if(t7_inPts.length>1){
+      const prev=t7_inPts[t7_inPts.indexOf(pt)-1];
+      if(prev){
+        t7_iCtx.beginPath(); t7_iCtx.moveTo(prev.x,prev.y); t7_iCtx.lineTo(pt.x,pt.y);
+        t7_iCtx.strokeStyle='#378ADD'; t7_iCtx.lineWidth=1+pt.pressure*2;
+        t7_iCtx.lineCap='round'; t7_iCtx.stroke();
+      }
+    }
+
+    // ② Grid
+    const gd=t7_buildGrid(pt.x,pt.y,pt.pressure,iW,iH);
+
+    // ③ Centroid
+    const cen=t7_centroid(gd,iW,iH);
+
+    // Draw heatmap only on last point in batch (perf)
+    if(pt===pts[pts.length-1]) t7_drawHeatmap(gd,cen);
+
+    if(!cen)continue;
+
+    // Draw centroid trace
+    if(t7_cenPts.length>0){
+      const prev=t7_cenPts[t7_cenPts.length-1];
+      const scx=t7_cCv.width/iW, scy=t7_cCv.height/iH;
+      t7_cCtx.beginPath(); t7_cCtx.moveTo(prev.x*scx,prev.y*scy);
+      t7_cCtx.lineTo(cen.x*scx,cen.y*scy);
+      t7_cCtx.strokeStyle='#1D9E75'; t7_cCtx.lineWidth=1+cen.pressure*2;
+      t7_cCtx.lineCap='round'; t7_cCtx.stroke();
+    }
+    t7_cenPts.push({...cen,t:pt.t});
+
+    // ④ OEF
+    const fx=t7_fx.filter(cen.x, pt.t);
+    const fy=t7_fy.filter(cen.y, pt.t);
+    const fp=t7_fp.filter(cen.pressure, pt.t);
+    const filt={x:fx,y:fy,pressure:fp,t:pt.t};
+    t7_filtPts.push(filt);
+
+    // ⑤ Latency queue
+    const jitter=(Math.random()-0.5)*2*t7_p.latj;
+    t7_queue.push({...filt, releaseAt: pt.t+Math.max(0,t7_p.lat+jitter)});
+  }
+
+  t7_updateMetrics();
+}
+
+// ── Live metrics ──────────────────────────────────────────────────
+function t7_jitter(pts){
+  if(pts.length<3)return 0;
+  const devs=[];
+  for(let i=1;i<pts.length-1;i++){
+    const a=pts[i-1],b=pts[i+1],p=pts[i];
+    const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy);
+    if(len<0.001)continue;
+    devs.push(Math.abs(dy*p.x-dx*p.y+b.x*a.y-b.y*a.x)/len);
+  }
+  if(!devs.length)return 0;
+  const mean=devs.reduce((s,v)=>s+v,0)/devs.length;
+  return Math.sqrt(devs.reduce((s,v)=>s+(v-mean)**2,0)/devs.length);
+}
+
+function t7_updateMetrics(){
+  // Centroid error: avg distance input → centroid (same-index pairs)
+  const n=Math.min(t7_inPts.length, t7_cenPts.length);
+  let errSum=0;
+  for(let i=0;i<n;i++) errSum+=Math.hypot(t7_inPts[i].x-t7_cenPts[i].x, t7_inPts[i].y-t7_cenPts[i].y);
+  const cerr=n>0?errSum/n:0;
+
+  // Filter lag estimate (OEF phase delay heuristic)
+  const avgDt=t7_filtPts.length>1
+    ?(t7_filtPts[t7_filtPts.length-1].t-t7_filtPts[0].t)/(t7_filtPts.length-1):16;
+  const flagMs=(1/t7_p.fmc-1)*avgDt*0.5;
+
+  // Output jitter
+  const oj=t7_jitter(t7_outRendered);
+  const totalLat=Math.round(flagMs+t7_p.lat);
+
+  document.getElementById('t7-m-cerr').innerHTML=cerr.toFixed(2)+'<span class="val-unit">px</span>';
+  document.getElementById('t7-m-flag').innerHTML=Math.round(flagMs)+'<span class="val-unit">ms</span>';
+  document.getElementById('t7-m-ojitter').innerHTML=oj.toFixed(2)+'<span class="val-unit">px</span>';
+  document.getElementById('t7-m-tlat').innerHTML=totalLat+'<span class="val-unit">ms</span>';
+  document.getElementById('t7-lat-indicator').textContent='('+t7_p.lat+'ms delay)';
+}
+
+// ── Params ────────────────────────────────────────────────────────
+function t7_onParams(){
+  t7_p.N      = parseInt(document.getElementById('t7-sel-grid').value);
+  t7_p.gnoise = parseFloat(document.getElementById('t7-sl-gnoise').value);
+  t7_p.thresh = parseFloat(document.getElementById('t7-sl-thresh').value);
+  t7_p.fbeta  = parseFloat(document.getElementById('t7-sl-fbeta').value);
+  t7_p.fmc    = parseFloat(document.getElementById('t7-sl-fmc').value);
+  t7_p.lat    = parseFloat(document.getElementById('t7-sl-lat').value);
+  t7_p.latj   = parseFloat(document.getElementById('t7-sl-latj').value);
+
+  document.getElementById('t7-lbl-grid').textContent   = t7_p.N+'×'+t7_p.N;
+  document.getElementById('t7-heatmap-label').textContent = t7_p.N+'×'+t7_p.N;
+  document.getElementById('t7-lbl-gnoise').textContent = t7_p.gnoise.toFixed(2);
+  document.getElementById('t7-lbl-thresh').textContent = t7_p.thresh.toFixed(2);
+  document.getElementById('t7-lbl-fbeta').textContent  = t7_p.fbeta.toFixed(3);
+  document.getElementById('t7-lbl-fmc').textContent    = t7_p.fmc.toFixed(1)+' Hz';
+  document.getElementById('t7-lbl-lat').textContent    = Math.round(t7_p.lat)+' ms';
+  document.getElementById('t7-lbl-latj').textContent   = '±'+Math.round(t7_p.latj)+' ms';
+}
+
+// ── Stroke history ────────────────────────────────────────────────
+function t7_recordStroke(){
+  const inputJ  = t7_jitter(t7_inPts);
+  const centJ   = t7_jitter(t7_cenPts);
+  const outputJ = t7_jitter(t7_outRendered);
+  const n=Math.min(t7_inPts.length, t7_cenPts.length);
+  let cerr=0;
+  for(let i=0;i<n;i++) cerr+=Math.hypot(t7_inPts[i].x-t7_cenPts[i].x,t7_inPts[i].y-t7_cenPts[i].y);
+  cerr=n>0?cerr/n:0;
+  t7_strokeHistory.push({inputJ,centJ,outputJ,cerr,params:{...t7_p}});
+  t7_updateHistory();
+}
+
+function t7_updateHistory(){
+  const el=document.getElementById('t7-history');
+  if(!t7_strokeHistory.length){el.textContent='no strokes recorded';return;}
+  const cols=['#','input jitter','centroid jitter','output jitter','centroid err','grid','noise','lat'];
+  const style=`display:grid; grid-template-columns: 24px repeat(${cols.length-1},minmax(0,1fr)); gap:4px 8px;`;
+  let html=`<div style="${style} margin-bottom:4px;">`+
+    cols.map(c=>`<span style="color:var(--text2);font-size:11px;">${c}</span>`).join('')+'</div>';
+  for(let i=t7_strokeHistory.length-1;i>=0;i--){
+    const e=t7_strokeHistory[i],n=i+1;
+    html+=`<div style="${style} padding:3px 0; border-top:0.5px solid var(--border);">
+      <span>${n}</span>
+      <span style="color:#378ADD">${e.inputJ.toFixed(2)}</span>
+      <span style="color:#1D9E75">${e.centJ.toFixed(2)}</span>
+      <span style="color:#e8e8e8">${e.outputJ.toFixed(2)}</span>
+      <span style="color:#EF9F27">${e.cerr.toFixed(2)}px</span>
+      <span style="color:var(--text2)">${e.params.N}×${e.params.N}</span>
+      <span style="color:var(--text2)">${e.params.gnoise.toFixed(2)}</span>
+      <span style="color:var(--text2)">${Math.round(e.params.lat)}ms</span>
+    </div>`;
+  }
+  el.innerHTML=html;
+}
+
+// ── Clear ─────────────────────────────────────────────────────────
+function t7_clear(){
+  [t7_iCtx,t7_gCtx,t7_cCtx,t7_oCtx].forEach((ctx,i)=>{
+    const cv=[t7_iCv,t7_gCv,t7_cCv,t7_oCv][i];
+    ctx.clearRect(0,0,cv.width,cv.height);
+  });
+  t7_inPts=[]; t7_cenPts=[]; t7_filtPts=[];
+  t7_queue=[]; t7_outRendered=[];
+  t7_strokeHistory=[];
+  t7_updateHistory();
+  ['t7-m-cerr','t7-m-flag','t7-m-ojitter','t7-m-tlat'].forEach(id=>
+    document.getElementById(id).innerHTML='—');
+}
+
+// ── Export config ─────────────────────────────────────────────────
+function t7_exportConfig(){
+  const avgOJ = t7_strokeHistory.length
+    ? t7_strokeHistory.reduce((s,e)=>s+e.outputJ,0)/t7_strokeHistory.length : null;
+  const avgCerr = t7_strokeHistory.length
+    ? t7_strokeHistory.reduce((s,e)=>s+e.cerr,0)/t7_strokeHistory.length : null;
+
+  const cfg={
+    tool:'Fine Tip Stylus — Tool 7 V2 Simulator Config',
+    generated: new Date().toISOString(),
+    firmware_target: 'RP2040 / overlay firmware',
+    pipeline:{
+      grid:{ resolution:t7_p.N, comment:`${t7_p.N}x${t7_p.N} ITO sensing grid` },
+      centroid:{ threshold:t7_p.thresh, comment:'cells below threshold excluded from weighted average' },
+      filter_one_euro:{ beta:t7_p.fbeta, min_cutoff:t7_p.fmc, comment:'port to filter.cpp — use these constants' },
+      latency:{ target_ms:t7_p.lat, jitter_ms:t7_p.latj, comment:'USB HID poll interval target' }
+    },
+    simulation_summary:{
+      strokes_recorded: t7_strokeHistory.length,
+      avg_output_jitter_px: avgOJ ? +avgOJ.toFixed(3) : null,
+      avg_centroid_error_px: avgCerr ? +avgCerr.toFixed(3) : null
+    }
+  };
+
+  const blob=new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='v2-firmware-config.json';
+  a.click();
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+t7_onParams();
 </script>
 
 </body>
